@@ -722,14 +722,27 @@ async function startRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks = [];
 
-    // Pick best supported mime type
-    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-      ? 'audio/webm;codecs=opus'
-      : MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : 'audio/mp4';
+    // 安卓 Chrome 相容：依序找支援的格式
+    let mimeType = '';
+    const candidates = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/ogg;codecs=opus',
+      'audio/ogg',
+      'audio/mp4',
+      ''
+    ];
+    for (const type of candidates) {
+      if (type === '' || MediaRecorder.isTypeSupported(type)) {
+        mimeType = type;
+        break;
+      }
+    }
 
-    mediaRecorder = new MediaRecorder(stream, { mimeType });
+    mediaRecorder = mimeType
+      ? new MediaRecorder(stream, { mimeType })
+      : new MediaRecorder(stream); // 讓瀏覽器自己選
+
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
     mediaRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); processAudio(); };
     mediaRecorder.start();
@@ -780,9 +793,10 @@ async function processAudio() {
   document.getElementById('micBtn').disabled = true;
 
   try {
-    const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
+    const recMime = mediaRecorder.mimeType || 'audio/webm';
+    const audioBlob = new Blob(audioChunks, { type: recMime });
     const base64Audio = await blobToBase64(audioBlob);
-    const audioMime = mediaRecorder.mimeType.split(';')[0];
+    const audioMime = recMime.split(';')[0];
 
     // Send to Gemini for STT + context-aware reply in one shot
     const contents = [
