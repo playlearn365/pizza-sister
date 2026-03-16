@@ -3,341 +3,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PIZZA姊姊說故事 🍕</title>
+<title>PIZZA姊姊說故事</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --pizza-red: #FF4D4D;
-    --pizza-orange: #FF8C42;
-    --pizza-yellow: #FFD166;
-    --pizza-green: #06D6A0;
-    --pizza-blue: #118AB2;
-    --pizza-purple: #9B5DE5;
-    --pizza-pink: #F72585;
-    --bg: #FFF9F0;
-    --bubble-bg: #ffffff;
-    --text: #2D2D2D;
-    --shadow: 0 8px 32px rgba(255,77,77,0.13);
-  }
+:root {
+  --red:#FF4757; --orange:#FF8C42; --yellow:#FFD93D;
+  --green:#2ED573; --blue:#1E90FF; --pink:#FF6B9D; --purple:#A55EEA;
+  --cream:#FFF8F0; --text:#3D2B1F; --text-light:#9B8572;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* 浮動泡泡背景 */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg span{position:absolute;border-radius:50%;opacity:0.06;animation:floatUp linear infinite;}
+.bg .s1{width:90px;height:90px;background:var(--red);left:5%;animation-duration:20s;}
+.bg .s2{width:55px;height:55px;background:var(--blue);left:22%;animation-duration:25s;animation-delay:-7s;}
+.bg .s3{width:130px;height:130px;background:var(--yellow);left:55%;animation-duration:18s;animation-delay:-11s;}
+.bg .s4{width:65px;height:65px;background:var(--pink);left:76%;animation-duration:22s;animation-delay:-4s;}
+.bg .s5{width:80px;height:80px;background:var(--green);left:40%;animation-duration:28s;animation-delay:-15s;}
+@keyframes floatUp{
+  0%{transform:translateY(110vh) scale(1);opacity:0;}
+  8%{opacity:0.06;}92%{opacity:0.06;}
+  100%{transform:translateY(-20vh) scale(1.4);opacity:0;}}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
-  }
+/* ═══ API SCREEN ═══ */
+#apiScreen{position:fixed;inset:0;z-index:200;
+  background:linear-gradient(150deg,#FF6B9D 0%,#FF8C42 45%,#FFD93D 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px;}
+.api-card{background:white;border-radius:36px;padding:42px 34px;max-width:450px;width:100%;
+  text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.25);
+  animation:popIn .5s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes popIn{from{transform:scale(.6) rotate(-4deg);opacity:0;}to{transform:scale(1);opacity:1;}}
 
-  /* Floating pizza decorations */
-  .pizza-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 0; overflow: hidden;
-  }
-  .pizza-bg span {
-    position: absolute; font-size: 2rem; opacity: 0.08;
-    animation: floatPizza 12s infinite ease-in-out;
-  }
-  .pizza-bg span:nth-child(1) { top: 5%; left: 8%; animation-delay: 0s; }
-  .pizza-bg span:nth-child(2) { top: 20%; left: 85%; animation-delay: 2s; }
-  .pizza-bg span:nth-child(3) { top: 50%; left: 5%; animation-delay: 4s; }
-  .pizza-bg span:nth-child(4) { top: 70%; left: 80%; animation-delay: 6s; }
-  .pizza-bg span:nth-child(5) { top: 85%; left: 45%; animation-delay: 8s; }
-  .pizza-bg span:nth-child(6) { top: 35%; left: 50%; animation-delay: 3s; font-size: 3rem; }
-  @keyframes floatPizza {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(10deg); }
-  }
+.pizza-chan{width:120px;height:120px;margin:0 auto 14px;animation:charBob 2.5s ease-in-out infinite;}
+@keyframes charBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-12px) rotate(3deg);}}
 
-  /* API Key Screen */
-  #apiScreen {
-    position: fixed; inset: 0; background: linear-gradient(135deg, #FF4D4D 0%, #FF8C42 50%, #FFD166 100%);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100; padding: 20px;
-  }
-  .api-card {
-    background: white; border-radius: 32px; padding: 48px 40px;
-    max-width: 480px; width: 100%; text-align: center;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes popIn {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  .api-pizza { font-size: 80px; margin-bottom: 16px; display: block;
-    animation: bounce 2s infinite; }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-  .api-card h1 { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--pizza-red);
-    font-weight: 800; margin-bottom: 8px; }
-  .api-card p { color: #666; font-size: 1rem; margin-bottom: 28px; line-height: 1.5; }
-  .api-input-group { margin-bottom: 12px; }
-  .api-input-group label { display: block; font-weight: 700; color: #444;
-    margin-bottom: 6px; text-align: left; font-size: 0.9rem; }
-  .api-input-group input {
-    width: 100%; padding: 14px 18px; border: 3px solid #eee; border-radius: 16px;
-    font-size: 1rem; font-family: 'Nunito', sans-serif; outline: none;
-    transition: border-color 0.2s;
-  }
-  .api-input-group input:focus { border-color: var(--pizza-red); }
-  .api-hint { font-size: 0.78rem; color: #999; margin-bottom: 24px; text-align: left; }
-  .btn-start {
-    width: 100%; padding: 16px; background: linear-gradient(135deg, #FF4D4D, #FF8C42);
-    border: none; border-radius: 16px; color: white; font-size: 1.2rem;
-    font-family: 'Baloo 2', cursive; font-weight: 700; cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 6px 20px rgba(255,77,77,0.4);
-  }
-  .btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(255,77,77,0.5); }
-  .btn-start:active { transform: translateY(0); }
+.api-card h1{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--red);margin-bottom:6px;}
+.api-card p{color:#888;font-size:.93rem;margin-bottom:22px;line-height:1.6;}
+.flabel{font-size:.85rem;font-weight:800;color:#555;text-align:left;margin-bottom:5px;}
+.finput{width:100%;padding:13px 16px;border:3px solid #eee;border-radius:16px;
+  font-size:1rem;font-family:'Nunito',sans-serif;outline:none;transition:border-color .2s;margin-bottom:8px;}
+.finput:focus{border-color:var(--red);}
+.api-hint{font-size:.77rem;color:#bbb;margin-bottom:20px;text-align:left;}
+.btn-start{width:100%;padding:16px;border:none;border-radius:50px;
+  background:linear-gradient(135deg,#FF4757,#FF8C42);color:white;
+  font-size:1.15rem;font-family:'Baloo 2',cursive;font-weight:800;cursor:pointer;
+  box-shadow:0 8px 0 rgba(180,50,20,.35);transition:all .15s;}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 11px 0 rgba(180,50,20,.35);}
+.btn-start:active{transform:translateY(4px);box-shadow:0 4px 0 rgba(180,50,20,.35);}
 
-  /* Main App */
-  #app { display: none; flex-direction: column; width: 100%; max-width: 720px;
-    min-height: 100vh; position: relative; z-index: 1; }
+/* ═══ MAIN APP ═══ */
+#app{display:none;flex-direction:column;width:100%;max-width:720px;min-height:100vh;position:relative;z-index:1;}
 
-  /* Header */
-  .header {
-    display: flex; align-items: center; gap: 14px; padding: 20px 24px 12px;
-    background: white; box-shadow: 0 4px 20px rgba(255,77,77,0.1);
-    position: sticky; top: 0; z-index: 10;
-  }
-  .header-avatar {
-    width: 56px; height: 56px; background: linear-gradient(135deg, #FF4D4D, #FF8C42);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 28px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(255,77,77,0.35);
-    animation: headerBounce 3s ease-in-out infinite;
-  }
-  @keyframes headerBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-  }
-  .header-info h2 { font-family: 'Baloo 2', cursive; font-size: 1.3rem;
-    color: var(--pizza-red); font-weight: 800; }
-  .header-info p { font-size: 0.82rem; color: #999; }
-  .header-tts { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-  .tts-toggle {
-    background: none; border: 2.5px solid #eee; border-radius: 20px;
-    padding: 6px 14px; font-family: 'Nunito', sans-serif; font-size: 0.85rem;
-    cursor: pointer; color: #888; font-weight: 700; transition: all 0.2s;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .tts-toggle.active { border-color: var(--pizza-green); color: var(--pizza-green);
-    background: rgba(6,214,160,0.08); }
+/* Header */
+.header{display:flex;align-items:center;gap:10px;padding:10px 16px 8px;
+  background:white;box-shadow:0 4px 0 rgba(255,71,87,.07),0 6px 18px rgba(0,0,0,.06);
+  position:sticky;top:0;z-index:20;border-bottom:3px solid #FFE8E0;}
+.hchar{width:52px;height:52px;flex-shrink:0;animation:hWiggle 3s ease-in-out infinite;}
+@keyframes hWiggle{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+.hinfo{flex:1;}
+.hinfo h2{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--red);line-height:1.2;}
+.hinfo p{font-size:.76rem;color:var(--text-light);font-weight:600;}
+.hbtns{display:flex;gap:6px;align-items:center;}
 
-  /* Chat Area */
-  .chat-area {
-    flex: 1; overflow-y: auto; padding: 20px 16px; display: flex;
-    flex-direction: column; gap: 16px;
-  }
+.btn-pause{width:44px;height:44px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#FFD93D,#FF8C42);
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  box-shadow:0 5px 0 rgba(180,100,0,.3);transition:all .15s;}
+.btn-pause:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(180,100,0,.3);}
+.btn-pause.paused{background:linear-gradient(135deg,var(--green),#17a853);
+  box-shadow:0 5px 0 rgba(0,120,60,.3);}
 
-  /* Messages */
-  .msg { display: flex; gap: 10px; max-width: 88%; animation: msgIn 0.35s cubic-bezier(0.34,1.3,0.64,1); }
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(16px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .msg.pizza { align-self: flex-start; flex-direction: row; }
-  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.btn-tts{width:44px;height:44px;border-radius:14px;border:none;cursor:pointer;
+  background:#f0f0f0;display:flex;align-items:center;justify-content:center;
+  font-size:19px;transition:all .15s;}
+.btn-tts.on{background:linear-gradient(135deg,var(--blue),var(--purple));}
 
-  .msg-avatar {
-    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
-    background: linear-gradient(135deg, #FF4D4D, #FF8C42);
-    box-shadow: 0 3px 10px rgba(255,77,77,0.3);
-  }
-  .msg.user .msg-avatar {
-    background: linear-gradient(135deg, var(--pizza-blue), var(--pizza-purple));
-    box-shadow: 0 3px 10px rgba(17,138,178,0.3);
-  }
+/* 暫停覆蓋 */
+.pause-ov{display:none;position:fixed;inset:0;z-index:150;
+  background:rgba(40,20,10,.72);backdrop-filter:blur(7px);
+  align-items:center;justify-content:center;}
+.pause-ov.show{display:flex;}
+.pause-card{background:white;border-radius:32px;padding:40px 34px;text-align:center;
+  max-width:320px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:popIn .3s cubic-bezier(0.34,1.56,0.64,1);}
+.pause-icon{font-size:60px;margin-bottom:10px;}
+.pause-card h2{font-family:'Baloo 2',cursive;font-size:1.7rem;color:var(--red);margin-bottom:6px;}
+.pause-card p{color:#888;font-size:.9rem;margin-bottom:22px;line-height:1.6;}
+.btn-resume{width:100%;padding:15px;border:none;border-radius:50px;
+  background:linear-gradient(135deg,var(--green),#17a853);color:white;
+  font-size:1.1rem;font-family:'Baloo 2',cursive;font-weight:800;cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,100,40,.3);transition:all .15s;}
+.btn-resume:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,100,40,.3);}
 
-  .msg-bubble {
-    padding: 14px 18px; border-radius: 22px; line-height: 1.65;
-    font-size: 1.02rem; max-width: calc(100% - 52px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-  }
-  .msg.pizza .msg-bubble {
-    background: white; color: var(--text);
-    border-bottom-left-radius: 6px;
-  }
-  .msg.user .msg-bubble {
-    background: linear-gradient(135deg, var(--pizza-blue), var(--pizza-purple));
-    color: white; border-bottom-right-radius: 6px;
-  }
+/* Chat */
+.chat-area{flex:1;overflow-y:auto;padding:14px 13px 8px;display:flex;flex-direction:column;gap:13px;}
+.chat-area::-webkit-scrollbar{width:5px;}
+.chat-area::-webkit-scrollbar-thumb{background:#FFD6C0;border-radius:3px;}
 
-  /* Typing indicator */
-  .typing-indicator { display: flex; gap: 5px; padding: 14px 18px; }
-  .typing-indicator span {
-    width: 9px; height: 9px; background: var(--pizza-orange);
-    border-radius: 50%; animation: typingDot 1.2s infinite;
-  }
-  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typingDot {
-    0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
-    40% { transform: scale(1.1); opacity: 1; }
-  }
+/* Messages */
+.msg{display:flex;gap:8px;max-width:91%;animation:msgIn .4s cubic-bezier(0.34,1.3,0.64,1);}
+@keyframes msgIn{from{opacity:0;transform:translateY(18px) scale(.92);}to{opacity:1;transform:none;}}
+.msg.pizza{align-self:flex-start;}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.mavatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.msg.user .mavatar{background:linear-gradient(135deg,var(--blue),var(--purple));font-size:20px;}
+.mbubble{padding:12px 16px;border-radius:22px;line-height:1.72;
+  font-size:1rem;max-width:calc(100% - 48px);box-shadow:0 4px 14px rgba(0,0,0,.07);}
+.msg.pizza .mbubble{background:white;color:var(--text);border-bottom-left-radius:5px;
+  border:2.5px solid #FFE4D6;}
+.msg.user .mbubble{background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:white;border-bottom-right-radius:5px;}
 
-  /* Speaking indicator */
-  .speaking-indicator {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(6,214,160,0.1); border-radius: 12px;
-    padding: 4px 10px; margin-top: 8px; font-size: 0.78rem; color: var(--pizza-green);
-    font-weight: 700;
-  }
-  .speaking-wave { display: flex; gap: 2px; align-items: center; }
-  .speaking-wave span {
-    width: 3px; background: var(--pizza-green); border-radius: 2px;
-    animation: wave 0.8s infinite ease-in-out;
-  }
-  .speaking-wave span:nth-child(1) { height: 8px; }
-  .speaking-wave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
-  .speaking-wave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
-  .speaking-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; }
-  .speaking-wave span:nth-child(5) { height: 8px; animation-delay: 0.4s; }
-  @keyframes wave {
-    0%, 100% { transform: scaleY(0.6); }
-    50% { transform: scaleY(1); }
-  }
+/* 故事回顧 */
+.story-recap{align-self:center;width:100%;max-width:580px;
+  background:linear-gradient(135deg,#FFFBF0,#FFF0F8);
+  border:3px dashed #FFB347;border-radius:24px;padding:20px 22px;
+  animation:msgIn .4s cubic-bezier(0.34,1.3,0.64,1);}
+.recap-title{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;
+  color:var(--red);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.recap-body{font-size:.93rem;color:var(--text);line-height:1.85;white-space:pre-wrap;}
+.btn-copy{margin-top:14px;width:100%;padding:11px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--orange),var(--yellow));
+  color:white;font-size:.95rem;font-family:'Baloo 2',cursive;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 0 rgba(180,100,0,.3);transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-copy:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(180,100,0,.3);}
+.btn-copy.copied{background:linear-gradient(135deg,var(--green),#17a853);
+  box-shadow:0 4px 0 rgba(0,120,50,.3);}
 
-  /* Input Area */
-  .input-area {
-    padding: 14px 16px; background: white;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-    display: flex; gap: 10px; align-items: flex-end;
-  }
-  .input-wrap { flex: 1; position: relative; }
-  textarea {
-    width: 100%; padding: 14px 18px; border: 3px solid #eee; border-radius: 20px;
-    font-size: 1rem; font-family: 'Nunito', sans-serif; outline: none; resize: none;
-    max-height: 120px; line-height: 1.5; transition: border-color 0.2s;
-    background: var(--bg);
-  }
-  textarea:focus { border-color: var(--pizza-red); background: white; }
-  textarea::placeholder { color: #bbb; }
-  textarea:disabled { opacity: 0.5; }
+/* Typing */
+.typing-ind{display:flex;gap:5px;padding:12px 16px;align-items:center;}
+.typing-ind span{width:9px;height:9px;border-radius:50%;animation:tdot 1.2s infinite ease-in-out;}
+.typing-ind span:nth-child(1){background:var(--orange);}
+.typing-ind span:nth-child(2){background:var(--red);animation-delay:.2s;}
+.typing-ind span:nth-child(3){background:var(--pink);animation-delay:.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1.2);opacity:1;}}
 
-  .btn-send {
-    width: 52px; height: 52px; background: linear-gradient(135deg, #FF4D4D, #FF8C42);
-    border: none; border-radius: 16px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 22px;
-    box-shadow: 0 4px 14px rgba(255,77,77,0.4); transition: transform 0.15s, box-shadow 0.15s;
-    flex-shrink: 0;
-  }
-  .btn-send:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(255,77,77,0.5); }
-  .btn-send:active { transform: scale(0.95); }
-  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+/* Speaking */
+.speaking-ind{display:inline-flex;align-items:center;gap:5px;
+  background:rgba(46,213,115,.12);border-radius:12px;
+  padding:4px 10px;margin-top:8px;font-size:.75rem;color:#17a853;font-weight:800;}
+.swave{display:flex;gap:2px;align-items:center;}
+.swave span{width:3px;background:#17a853;border-radius:2px;animation:sw .8s infinite ease-in-out;}
+.swave .a{height:6px;}.swave .b{height:12px;animation-delay:.1s;}
+.swave .c{height:8px;animation-delay:.2s;}.swave .d{height:14px;animation-delay:.3s;}
+.swave .e{height:6px;animation-delay:.4s;}
+@keyframes sw{0%,100%{transform:scaleY(.5);}50%{transform:scaleY(1);}}
 
-  /* Mic button */
-  .btn-mic {
-    width: 52px; height: 52px; background: linear-gradient(135deg, var(--pizza-blue), var(--pizza-purple));
-    border: none; border-radius: 16px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 22px;
-    box-shadow: 0 4px 14px rgba(17,138,178,0.4); transition: transform 0.15s, box-shadow 0.15s;
-    flex-shrink: 0; position: relative;
-  }
-  .btn-mic:hover { transform: translateY(-2px) scale(1.05); }
-  .btn-mic:active { transform: scale(0.95); }
-  .btn-mic:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .btn-mic.recording {
-    background: linear-gradient(135deg, var(--pizza-pink), var(--pizza-red));
-    box-shadow: 0 0 0 0 rgba(247,37,133,0.5);
-    animation: micPulse 1.2s infinite;
-  }
-  @keyframes micPulse {
-    0% { box-shadow: 0 0 0 0 rgba(247,37,133,0.5); }
-    70% { box-shadow: 0 0 0 14px rgba(247,37,133,0); }
-    100% { box-shadow: 0 0 0 0 rgba(247,37,133,0); }
-  }
+/* Recording */
+.rec-msg{align-self:flex-end;display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--red),var(--pink));color:white;
+  padding:11px 17px;border-radius:20px;border-bottom-right-radius:4px;
+  font-weight:800;font-size:.88rem;box-shadow:0 4px 14px rgba(255,71,87,.35);
+  animation:msgIn .3s ease;}
+.rec-dot{width:10px;height:10px;background:white;border-radius:50%;animation:rblink 1s infinite;}
+@keyframes rblink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.proc-msg{align-self:flex-end;background:rgba(165,94,234,.12);color:var(--purple);
+  padding:9px 16px;border-radius:18px;font-weight:700;font-size:.86rem;animation:msgIn .3s ease;}
 
-  /* Recording overlay in chat */
-  .recording-msg {
-    align-self: flex-end; display: flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, var(--pizza-pink), var(--pizza-red));
-    color: white; padding: 12px 20px; border-radius: 22px; border-bottom-right-radius: 6px;
-    font-weight: 700; font-size: 0.95rem; max-width: 88%;
-    box-shadow: 0 4px 16px rgba(247,37,133,0.35);
-    animation: msgIn 0.35s cubic-bezier(0.34,1.3,0.64,1);
-  }
-  .rec-dot {
-    width: 10px; height: 10px; background: white; border-radius: 50%;
-    animation: recBlink 1s infinite;
-  }
-  @keyframes recBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+/* Input */
+.input-area{padding:11px 13px 13px;background:white;
+  box-shadow:0 -4px 20px rgba(0,0,0,.06);border-top:3px solid #FFE8E0;
+  display:flex;gap:8px;align-items:flex-end;}
+.input-wrap{flex:1;}
+textarea{width:100%;padding:12px 16px;border:3px solid #eee;border-radius:20px;
+  font-size:1rem;font-family:'Nunito',sans-serif;outline:none;resize:none;
+  max-height:110px;line-height:1.5;transition:border-color .2s;background:var(--cream);}
+textarea:focus{border-color:var(--red);background:white;}
+textarea::placeholder{color:#ccc;}
+textarea:disabled{opacity:.5;}
 
-  /* Processing msg */
-  .processing-msg {
-    align-self: flex-end; background: rgba(155,93,229,0.12);
-    color: var(--pizza-purple); padding: 10px 18px; border-radius: 22px;
-    border-bottom-right-radius: 6px; font-weight: 700; font-size: 0.88rem;
-    animation: msgIn 0.3s ease;
-  }
+.btn-mic{width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 5px 0 rgba(20,60,180,.3);transition:all .15s;flex-shrink:0;}
+.btn-mic:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(20,60,180,.3);}
+.btn-mic.recording{background:linear-gradient(135deg,var(--red),var(--pink));
+  box-shadow:0 5px 0 rgba(180,20,60,.3);animation:mpulse 1s infinite;}
+@keyframes mpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.btn-send{width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--red),var(--orange));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 5px 0 rgba(180,40,20,.3);transition:all .15s;flex-shrink:0;}
+.btn-send:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(180,40,20,.3);}
+.btn-send:disabled,.btn-mic:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
 
-  /* Stage badges */
-  .stage-badge {
-    display: inline-block; padding: 4px 12px; border-radius: 20px;
-    font-size: 0.75rem; font-weight: 800; margin-bottom: 8px;
-    letter-spacing: 0.5px; text-transform: uppercase;
-  }
-  .stage-story { background: rgba(255,141,66,0.15); color: var(--pizza-orange); }
-  .stage-q1 { background: rgba(6,214,160,0.15); color: var(--pizza-green); }
-  .stage-q2 { background: rgba(155,93,229,0.15); color: var(--pizza-purple); }
-  .stage-q3 { background: rgba(247,37,133,0.15); color: var(--pizza-pink); }
-  .stage-q4 { background: rgba(17,138,178,0.15); color: var(--pizza-blue); }
-
-  /* Error toast */
-  .toast {
-    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-    background: #333; color: white; padding: 12px 24px; border-radius: 16px;
-    font-size: 0.9rem; z-index: 50; animation: toastIn 0.3s ease;
-    max-width: 90vw; text-align: center;
-  }
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); }
-  }
-
-  /* Scrollbar */
-  .chat-area::-webkit-scrollbar { width: 6px; }
-  .chat-area::-webkit-scrollbar-track { background: transparent; }
-  .chat-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+/* Toast */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+  background:rgba(40,20,10,.92);color:white;padding:11px 22px;
+  border-radius:20px;font-size:.9rem;font-weight:700;z-index:300;
+  animation:toastIn .3s ease;max-width:90vw;text-align:center;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px);}
+  to{opacity:1;transform:translateX(-50%) translateY(0);}}
 </style>
 </head>
 <body>
 
-<div class="pizza-bg">
-  <span>🍕</span><span>⭐</span><span>🌟</span><span>🍕</span><span>✨</span><span>🍕</span>
+<div class="bg">
+  <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+  <span class="s4"></span><span class="s5"></span>
 </div>
 
-<!-- API Key Screen -->
+<!-- ═══ API SCREEN ═══ -->
 <div id="apiScreen">
   <div class="api-card">
-    <span class="api-pizza">🍕</span>
-    <h1>PIZZA姊姊說故事</h1>
-    <p>老師您好！請輸入您的 Gemini API 金鑰，讓 PIZZA 姊姊開始跟小朋友一起創作故事吧！</p>
-    <div class="api-input-group">
-      <label>🔑 Google Gemini API Key</label>
-      <input type="password" id="geminiKey" placeholder="AIza..." autocomplete="off">
-    </div>
-    <p class="api-hint">* 金鑰僅儲存於您的瀏覽器中，不會上傳至任何伺服器。此金鑰同時用於 AI 對話與語音朗讀功能。</p>
-    <button class="btn-start" onclick="startApp()">🎉 開始說故事！</button>
+    <!-- PIZZA姊姊人物 -->
+    <svg class="pizza-chan" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <!-- 頭髮 -->
+      <ellipse cx="60" cy="38" rx="32" ry="24" fill="#4A2C0A"/>
+      <rect x="28" y="36" width="9" height="26" rx="4.5" fill="#4A2C0A"/>
+      <rect x="83" y="36" width="9" height="26" rx="4.5" fill="#4A2C0A"/>
+      <!-- 雙馬尾 -->
+      <ellipse cx="22" cy="48" rx="10" ry="14" fill="#FF6B9D" transform="rotate(-18 22 48)"/>
+      <ellipse cx="98" cy="48" rx="10" ry="14" fill="#FF6B9D" transform="rotate(18 98 48)"/>
+      <!-- 髮飾 -->
+      <circle cx="28" cy="38" r="6" fill="#FFD93D" stroke="#FF8C42" stroke-width="2"/>
+      <circle cx="92" cy="38" r="6" fill="#FFD93D" stroke="#FF8C42" stroke-width="2"/>
+      <!-- 臉 -->
+      <ellipse cx="60" cy="60" rx="28" ry="26" fill="#FFDAB9"/>
+      <!-- 眼睛白 -->
+      <ellipse cx="49" cy="55" rx="7" ry="8" fill="white"/>
+      <ellipse cx="71" cy="55" rx="7" ry="8" fill="white"/>
+      <!-- 眼珠 -->
+      <circle cx="50" cy="56" r="5" fill="#3D1C02"/>
+      <circle cx="72" cy="56" r="5" fill="#3D1C02"/>
+      <!-- 亮點 -->
+      <circle cx="52" cy="54" r="2" fill="white"/>
+      <circle cx="74" cy="54" r="2" fill="white"/>
+      <!-- 睫毛 -->
+      <path d="M43 49 Q46 46 49 48" stroke="#3D1C02" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 48 Q68 46 71 49" stroke="#3D1C02" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- 腮紅 -->
+      <ellipse cx="42" cy="64" rx="7" ry="4" fill="#FFB6C1" opacity=".65"/>
+      <ellipse cx="78" cy="64" rx="7" ry="4" fill="#FFB6C1" opacity=".65"/>
+      <!-- 嘴 -->
+      <path d="M50 70 Q60 78 70 70" stroke="#C0665A" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- 身體 -->
+      <rect x="34" y="84" width="52" height="44" rx="16" fill="#FF6B9D"/>
+      <!-- 衣服條紋 -->
+      <rect x="34" y="96" width="52" height="6" fill="#FF4757" opacity=".4"/>
+      <rect x="34" y="108" width="52" height="6" fill="#FF4757" opacity=".4"/>
+      <!-- PIZZA 胸章 -->
+      <circle cx="60" cy="96" r="13" fill="#FFD93D" stroke="#FF8C42" stroke-width="2.5"/>
+      <path d="M60 83 L73 103 L47 103 Z" fill="#FF8C42" opacity=".55"/>
+      <circle cx="60" cy="96" r="5" fill="#FF4757"/>
+      <!-- 手 -->
+      <ellipse cx="28" cy="95" rx="8" ry="11" fill="#FFDAB9"/>
+      <ellipse cx="92" cy="95" rx="8" ry="11" fill="#FFDAB9"/>
+      <!-- 腳 -->
+      <rect x="42" y="126" width="14" height="12" rx="6" fill="#FF4757"/>
+      <rect x="64" y="126" width="14" height="12" rx="6" fill="#FF4757"/>
+    </svg>
+    <h1>PIZZA 姊姊</h1>
+    <p>老師您好！輸入 Gemini API Key<br>讓 PIZZA 姊姊陪小朋友一起創作故事吧！🎉</p>
+    <div class="flabel">🔑 Google Gemini API Key</div>
+    <input class="finput" type="password" id="geminiKey" placeholder="AIza..." autocomplete="off">
+    <p class="api-hint">* Key 只存在您的裝置上，不會上傳至任何地方 🔒</p>
+    <button class="btn-start" onclick="startApp()">🍕 出發去說故事囉！</button>
   </div>
 </div>
 
-<!-- Main App -->
+<!-- ═══ MAIN APP ═══ -->
 <div id="app">
   <div class="header">
-    <div class="header-avatar">🍕</div>
-    <div class="header-info">
+    <!-- 小版角色 -->
+    <svg class="hchar" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="30" cy="19" rx="16" ry="12" fill="#4A2C0A"/>
+      <rect x="14" y="17" width="5" height="14" rx="2.5" fill="#4A2C0A"/>
+      <rect x="41" y="17" width="5" height="14" rx="2.5" fill="#4A2C0A"/>
+      <ellipse cx="10" cy="24" rx="5.5" ry="7.5" fill="#FF6B9D" transform="rotate(-18 10 24)"/>
+      <ellipse cx="50" cy="24" rx="5.5" ry="7.5" fill="#FF6B9D" transform="rotate(18 50 24)"/>
+      <circle cx="14" cy="19" r="3.5" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+      <circle cx="46" cy="19" r="3.5" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+      <ellipse cx="30" cy="30" rx="14" ry="13" fill="#FFDAB9"/>
+      <ellipse cx="24" cy="27" rx="3.5" ry="4" fill="white"/>
+      <ellipse cx="36" cy="27" rx="3.5" ry="4" fill="white"/>
+      <circle cx="24.5" cy="27.5" r="2.5" fill="#3D1C02"/>
+      <circle cx="36.5" cy="27.5" r="2.5" fill="#3D1C02"/>
+      <circle cx="25.5" cy="26.2" r="1" fill="white"/>
+      <circle cx="37.5" cy="26.2" r="1" fill="white"/>
+      <ellipse cx="20" cy="33" rx="3.5" ry="2" fill="#FFB6C1" opacity=".65"/>
+      <ellipse cx="40" cy="33" rx="3.5" ry="2" fill="#FFB6C1" opacity=".65"/>
+      <path d="M24 37 Q30 42 36 37" stroke="#C0665A" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <rect x="18" y="42" width="24" height="22" rx="8" fill="#FF6B9D"/>
+      <circle cx="30" cy="51" r="7" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+      <circle cx="30" cy="51" r="3" fill="#FF4757"/>
+    </svg>
+    <div class="hinfo">
       <h2>PIZZA 姊姊</h2>
-      <p>一起來創作故事吧！</p>
+      <p>一起來創作故事吧！🌟</p>
     </div>
-    <div class="header-tts">
-      <button class="tts-toggle active" id="ttsBtn" onclick="toggleTTS()">🔊 語音開啟</button>
+    <div class="hbtns">
+      <button class="btn-pause" id="pauseBtn" onclick="togglePause()" title="暫停讓老師說話">⏸️</button>
+      <button class="btn-tts on" id="ttsBtn" onclick="toggleTTS()" title="語音開關">🔊</button>
     </div>
   </div>
 
@@ -345,29 +307,49 @@
 
   <div class="input-area">
     <div class="input-wrap">
-      <textarea id="userInput" placeholder="小朋友說話，或按麥克風錄音 🎤" rows="1"
+      <textarea id="userInput" placeholder="小朋友說話，或按 🎤 錄音" rows="1"
         onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
     </div>
-    <button class="btn-mic" id="micBtn" onclick="toggleRecording()" title="按住說話">🎤</button>
+    <button class="btn-mic" id="micBtn" onclick="toggleRecording()">🎤</button>
     <button class="btn-send" id="sendBtn" onclick="sendMessage()">➤</button>
   </div>
 </div>
 
+<!-- ═══ 暫停覆蓋 ═══ -->
+<div class="pause-ov" id="pauseOv">
+  <div class="pause-card">
+    <div class="pause-icon">⏸️</div>
+    <h2>暫停中</h2>
+    <p>老師，請跟小朋友說說話吧！<br>準備好了再按繼續 😊</p>
+    <button class="btn-resume" onclick="togglePause()">▶ 繼續說故事</button>
+  </div>
+</div>
+
 <script>
-let geminiKey = '';
-let ttsEnabled = true;
-let isSpeaking = false;
-let conversationHistory = [];
-let isLoading = false;
-let currentAudio = null;
+let geminiKey='', ttsEnabled=true, isPaused=false, isLoading=false;
+let currentAudio=null, audioCtx=null;
+let conversationHistory=[], storyParts=[];
+let mediaRecorder=null, audioChunks=[], isRecording=false, recordingMsgEl=null;
 
-// Recording state
-let mediaRecorder = null;
-let audioChunks = [];
-let isRecording = false;
-let recordingMsgEl = null;
+function unlockAudio(){
+  if(audioCtx) return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
 
-const SYSTEM_PROMPT = `你是PIZZA姊姊，一個專門為4到6歲幼兒說故事的溫暖、活潑、充滿愛心的說故事姊姊。
+function pcmToWav(pcm,sr){
+  const nc=1,bps=16,ds=pcm.length*2,buf=new ArrayBuffer(44+ds),v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF');v.setUint32(4,36+ds,true);ws(8,'WAVE');ws(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,nc,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);
+  v.setUint16(32,2,true);v.setUint16(34,bps,true);
+  ws(36,'data');v.setUint32(40,ds,true);
+  for(let i=0;i<pcm.length;i++)v.setInt16(44+i*2,pcm[i],true);
+  return new Blob([v],{type:'audio/wav'});
+}
+
+const SYSTEM_PROMPT=`你是PIZZA姊姊，一個專門為4到6歲幼兒說故事的溫暖、活潑、充滿愛心的說故事姊姊。
 
 你的個性：
 - 說話用簡單、可愛、溫暖的中文，符合4-6歲小朋友能理解的詞彙
@@ -382,525 +364,409 @@ const SYSTEM_PROMPT = `你是PIZZA姊姊，一個專門為4到6歲幼兒說故�
 - 問小朋友今天想聽什麼樣的故事
 - 說完就停，等待小朋友回答。不做其他事。
 
-步驟2【說故事開頭＋等選擇】：
+步驟2【說故事開頭＋等選主角】：
 - 當小朋友說出故事主題後，說約80-100字的故事開頭場景（不要有主角名字）
-- 故事開頭說完後，立刻給3個主角選項讓小朋友選，格式如下：
+- 故事開頭說完後，立刻給3個主角選項，格式如下：
   「故事裡的主角可以是...
-  1️⃣ [選項A] 
-  2️⃣ [選項B] 
-  3️⃣ [選項C] 
+  1️⃣ [選項A]
+  2️⃣ [選項B]
+  3️⃣ [選項C]
   你想選哪一個呢？」
 - ⚠️ 說完選項後立刻停止！絕對不可以繼續說故事！等小朋友選擇！
 
-步驟3【繼續並完成故事】：
-- 只有在小朋友明確說出選哪個主角之後，才進入這步驟
-- 用小朋友選的主角，繼續把故事說完（約150-200字），要有起承轉合，結局溫馨有趣
-- 故事說完後立刻停止，不做其他事
+步驟3【說故事中段＋等選情節】：
+- 只有在小朋友明確選了主角之後，才進入這步驟
+- 用小朋友選的主角，繼續說故事中段（約80-100字），讓故事發展到一個關鍵轉折點，但不說結局
+- 中段說完後，立刻給3個情節選項，格式如下：
+  「這個時候，[主角名字]可以...
+  1️⃣ [選項A]
+  2️⃣ [選項B]
+  3️⃣ [選項C]
+  你覺得他應該怎麼做呢？」
+- ⚠️ 這是整個故事唯一的情節選擇，說完後立刻停止！等小朋友選擇！絕對不能再給其他選項！
 
-步驟4【讚美＋過渡問題】：
-- 故事結束後，熱情讚美小朋友一起創作了這個故事（1-2句就好）
-- 然後問：「你喜歡這個故事嗎？」
-- 說完就停，等小朋友回答
+步驟4【說故事結局＋讚美＋過渡問題】：
+- 只有在小朋友選了情節選項之後，才進入這步驟
+- 根據小朋友的選擇，把故事說完（約100-120字），結局要溫馨有趣
+- 結局說完後，緊接著熱情讚美小朋友一起創作了這個故事（1-2句）
+- 最後問：「你喜歡這個故事嗎？」
+- ⚠️ 這三件事（結局＋讚美＋問喜不喜歡）在同一個回應裡完成，說完就停，等小朋友回答
+- ⚠️ 在回應的最後一行，請加上標記：【故事結束】
 
 步驟5【四層次提問】：
 - 當小朋友說喜歡（或任何正面回應）後，才開始提問
 - 依序一次只問一個問題，等小朋友回答後才問下一個：
-  - 第一層（記憶）：問故事情節，例如「故事主角叫什麼？」「他遇到了誰？」
+  - 第一層（記憶）：問故事裡發生的事情，例如「他在路上遇到了什麼？」「故事裡發生了什麼有趣的事？」「[角色]後來去了哪裡？」等，每次用不同的問法，不要每次都問主角叫什麼名字
   - 第二層（推理）：「你覺得他為什麼要這樣做呢？」
   - 第三層（換位）：「如果你是[角色]，你會怎麼做？」
   - 第四層（生活）：「你有沒有像[角色]一樣的經驗？」
+- ⚠️ 小朋友回答完第四層問題後，PIZZA姊姊給一句溫暖的結語，然後在回應的最後一行加上：【提問結束】
 
 重要規則：
-- 每次回應只做當前步驟該做的事，絕對不跳步驟
-- 步驟2說完選項後必須停下來，不能自己繼續說故事
+- 每次回應只做當前步驟該做的事，絕對不跳步驟、也絕對不重複已經做過的步驟
+- 整個故事流程中，選主角只出現一次（步驟2），選情節只出現一次（步驟3），不能重複出現
+- 步驟2和步驟3說完選項後必須停下來，不能自己繼續說故事
+- 步驟4在同一個回應完成結局＋讚美＋問喜不喜歡
 - 故事要乾淨、正向、適合幼兒
 - 如果小朋友的回答很短或跑題，溫柔地引導回來
 - 使用繁體中文`;
 
-function startApp() {
-  geminiKey = document.getElementById('geminiKey').value.trim();
-
-  if (!geminiKey) {
-    showToast('請輸入 Gemini API Key！');
-    return;
-  }
-
-  document.getElementById('apiScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
+// ── 啟動 ──
+function startApp(){
+  geminiKey=document.getElementById('geminiKey').value.trim();
+  if(!geminiKey){showToast('請輸入 Gemini API Key！');return;}
+  document.getElementById('apiScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
   unlockAudio();
-
-  ttsEnabled = true;
-  updateTTSBtn();
-
-  // Start conversation
-  sendToAPI('你好！', true);
+  sendToAPI('',true);
 }
 
-function toggleTTS() {
-  ttsEnabled = !ttsEnabled;
-  if (!ttsEnabled && currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
-  updateTTSBtn();
-}
-
-function updateTTSBtn() {
-  const btn = document.getElementById('ttsBtn');
-  if (ttsEnabled) {
-    btn.textContent = '🔊 語音開啟';
-    btn.classList.add('active');
+// ── 暫停 ──
+function togglePause(){
+  isPaused=!isPaused;
+  const ov=document.getElementById('pauseOv'),btn=document.getElementById('pauseBtn');
+  if(isPaused){
+    ov.classList.add('show');btn.classList.add('paused');btn.textContent='▶️';
+    if(currentAudio) currentAudio.pause();
+    if(audioCtx) audioCtx.suspend();
   } else {
-    btn.textContent = '🔇 語音關閉';
-    btn.classList.remove('active');
+    ov.classList.remove('show');btn.classList.remove('paused');btn.textContent='⏸️';
+    if(audioCtx) audioCtx.resume();
+    if(currentAudio) currentAudio.play().catch(()=>{});
   }
 }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+// ── TTS 開關 ──
+function toggleTTS(){
+  ttsEnabled=!ttsEnabled;
+  const btn=document.getElementById('ttsBtn');
+  if(ttsEnabled){btn.textContent='🔊';btn.classList.add('on');}
+  else{btn.textContent='🔇';btn.classList.remove('on');
+    if(currentAudio){currentAudio.pause();currentAudio=null;}}
 }
 
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-function sendMessage() {
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if (!text || isLoading) return;
+// ── UI ──
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,110)+'px';}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function sendMessage(){
+  const input=document.getElementById('userInput'),text=input.value.trim();
+  if(!text||isLoading||isPaused) return;
   unlockAudio();
-  input.value = '';
-  input.style.height = 'auto';
-  addMessage('user', text);
-  sendToAPI(text, false);
+  input.value='';input.style.height='auto';
+  addMessage('user',text);
+  sendToAPI(text,false);
 }
 
-function addMessage(role, text, isTyping = false) {
-  const chatArea = document.getElementById('chatArea');
-  const div = document.createElement('div');
-  div.className = `msg ${role === 'assistant' ? 'pizza' : 'user'}`;
+const CHAR_SVG=`<svg viewBox="0 0 60 70" width="38" height="38" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="19" rx="16" ry="12" fill="#4A2C0A"/>
+  <rect x="14" y="17" width="5" height="14" rx="2.5" fill="#4A2C0A"/>
+  <rect x="41" y="17" width="5" height="14" rx="2.5" fill="#4A2C0A"/>
+  <ellipse cx="10" cy="24" rx="5.5" ry="7.5" fill="#FF6B9D" transform="rotate(-18 10 24)"/>
+  <ellipse cx="50" cy="24" rx="5.5" ry="7.5" fill="#FF6B9D" transform="rotate(18 50 24)"/>
+  <circle cx="14" cy="19" r="3.5" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+  <circle cx="46" cy="19" r="3.5" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+  <ellipse cx="30" cy="30" rx="14" ry="13" fill="#FFDAB9"/>
+  <ellipse cx="24" cy="27" rx="3.5" ry="4" fill="white"/>
+  <ellipse cx="36" cy="27" rx="3.5" ry="4" fill="white"/>
+  <circle cx="24.5" cy="27.5" r="2.5" fill="#3D1C02"/>
+  <circle cx="36.5" cy="27.5" r="2.5" fill="#3D1C02"/>
+  <circle cx="25.5" cy="26.2" r="1" fill="white"/>
+  <circle cx="37.5" cy="26.2" r="1" fill="white"/>
+  <ellipse cx="20" cy="33" rx="3.5" ry="2" fill="#FFB6C1" opacity=".65"/>
+  <ellipse cx="40" cy="33" rx="3.5" ry="2" fill="#FFB6C1" opacity=".65"/>
+  <path d="M24 37 Q30 42 36 37" stroke="#C0665A" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <rect x="18" y="42" width="24" height="22" rx="8" fill="#FF6B9D"/>
+  <circle cx="30" cy="51" r="7" fill="#FFD93D" stroke="#FF8C42" stroke-width="1.5"/>
+  <circle cx="30" cy="51" r="3" fill="#FF4757"/>
+</svg>`;
 
-  const avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  avatar.textContent = role === 'assistant' ? '🍕' : '🧒';
-
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble';
-
-  if (isTyping) {
-    bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
-    div.id = 'typingMsg';
+function addMessage(role,text,isTyping=false){
+  const ca=document.getElementById('chatArea');
+  const div=document.createElement('div');
+  div.className=`msg ${role==='assistant'?'pizza':'user'}`;
+  const av=document.createElement('div');av.className='mavatar';
+  if(role==='assistant') av.innerHTML=CHAR_SVG;
+  else av.textContent='🧒';
+  const bub=document.createElement('div');bub.className='mbubble';
+  if(isTyping){
+    bub.innerHTML='<div class="typing-ind"><span></span><span></span><span></span></div>';
+    div.id='typingMsg';
   } else {
-    bubble.innerHTML = formatText(text);
+    bub.innerHTML=formatText(text);
   }
-
-  div.appendChild(avatar);
-  div.appendChild(bubble);
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
-
-  return { div, bubble };
+  div.appendChild(av);div.appendChild(bub);
+  ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
+  return{div,bubble:bub};
 }
 
-function formatText(text) {
-  return text
-    .replace(/\n/g, '<br>')
-    .replace(/【(.+?)】/g, '<div class="stage-badge stage-story">$1</div>');
+function formatText(t){
+  return t.replace(/\n/g,'<br>').replace(/【故事結束】|【提問結束】/g,'');
 }
 
-async function sendToAPI(userText, isInit) {
-  isLoading = true;
-  document.getElementById('sendBtn').disabled = true;
-  document.getElementById('micBtn').disabled = true;
+function showStoryRecap(){
+  // 從對話紀錄中找出故事內容（步驟2、3、4），避免重複
+  const storyMessages = conversationHistory
+    .filter(m => m.role === 'model')
+    .map(m => m.parts[0].text)
+    .filter(t =>
+      t.includes('從前') || t.includes('有一天') ||
+      t.includes('故事裡的主角可以是') || t.includes('這個時候') ||
+      t.includes('你喜歡這個故事嗎') || t.includes('【故事結束】')
+    );
+  if(!storyMessages.length) return;
+  // 已經顯示過就不重複
+  if(document.querySelector('.story-recap')) return;
 
-  if (!isInit) {
-    conversationHistory.push({ role: 'user', parts: [{ text: userText }] });
-  }
+  const ca=document.getElementById('chatArea');
+  const card=document.createElement('div');
+  card.className='story-recap';
+  const cleanStory=storyMessages.join('\n\n')
+    .replace(/故事裡的主角可以是[\s\S]*?你想選哪一個呢？/g,'')
+    .replace(/這個時候，[\s\S]*?你覺得他應該怎麼做呢？/g,'')
+    .replace(/1️⃣[^\n]*\n?|2️⃣[^\n]*\n?|3️⃣[^\n]*\n?/g,'')
+    .replace(/你喜歡這個故事嗎？/g,'')
+    .replace(/【故事結束】|【提問結束】/g,'')
+    .replace(/\n{3,}/g,'\n\n').trim();
+  card.innerHTML=`<div class="recap-title">📖 我們今天一起創作的故事！</div>
+    <div class="recap-body" id="recapText">${cleanStory.replace(/\n/g,'<br>')}</div>
+    <button class="btn-copy" onclick="copyStory(this,'${encodeURIComponent(cleanStory)}')">📋 複製故事</button>`;
+  ca.appendChild(card);ca.scrollTop=ca.scrollHeight;
+}
 
-  // Show typing indicator
-  addMessage('assistant', '', true);
+function copyStory(btn, encodedText){
+  const text=decodeURIComponent(encodedText);
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ 已複製！';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 複製故事';btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    // fallback for older browsers
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✅ 已複製！';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 複製故事';btn.classList.remove('copied');},2500);
+  });
+}
 
-  try {
-    const contents = isInit
-      ? [{ role: 'user', parts: [{ text: '開始！請用PIZZA姊姊的方式跟我打招呼並問我想聽什麼故事。' }] }]
-      : conversationHistory;
-
-    const response = await fetch(
+// ── 送 API ──
+async function sendToAPI(userText,isInit){
+  if(isPaused) return;
+  isLoading=true;
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('micBtn').disabled=true;
+  if(!isInit) conversationHistory.push({role:'user',parts:[{text:userText}]});
+  addMessage('assistant','',true);
+  try{
+    const contents=isInit
+      ?[{role:'user',parts:[{text:'開始！請用PIZZA姊姊的方式跟我打招呼並問我想聽什麼故事。'}]}]
+      :conversationHistory;
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: contents,
-          generationConfig: { maxOutputTokens: 600 }
-        })
-      }
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
+         contents,generationConfig:{maxOutputTokens:1200}
+       })}
     );
+    const data=await res.json();
+    const tm=document.getElementById('typingMsg');if(tm) tm.remove();
+    if(data.error){showToast('API 錯誤：'+data.error.message);return;}
 
-    const data = await response.json();
+    let reply=data.candidates[0].content.parts[0].text;
+    conversationHistory.push({role:'model',parts:[{text:reply}]});
 
-    // Remove typing indicator
-    const typingMsg = document.getElementById('typingMsg');
-    if (typingMsg) typingMsg.remove();
+    const isEnd=reply.includes('【提問結束】');
+    const{bubble}=addMessage('assistant',reply);
 
-    if (data.error) {
-      showToast('API 錯誤：' + data.error.message);
-      isLoading = false;
-      document.getElementById('sendBtn').disabled = false;
-      document.getElementById('micBtn').disabled = false;
-      return;
+    isLoading=false;
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('micBtn').disabled=false;
+    document.getElementById('chatArea').scrollTop=document.getElementById('chatArea').scrollHeight;
+
+    if(isEnd) setTimeout(()=>showStoryRecap(),700);
+
+    if(ttsEnabled&&!isPaused){
+      const ttsText=reply.replace(/【故事結束】|【提問結束】/g,'');
+      const sp=document.createElement('div');sp.className='speaking-ind';
+      sp.innerHTML='<div class="swave"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span></div> 說話中...';
+      bubble.appendChild(sp);
+      speakText(ttsText,sp);
     }
-
-    const reply = data.candidates[0].content.parts[0].text;
-    conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
-
-    // ① 立即顯示文字，不等 TTS
-    const { bubble } = addMessage('assistant', reply);
-
-    // ② 解鎖輸入，讓使用者可以繼續互動
-    isLoading = false;
-    document.getElementById('sendBtn').disabled = false;
-    document.getElementById('micBtn').disabled = false;
-    document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
-
-    // ③ TTS 在背景執行，不阻擋
-    if (ttsEnabled) {
-      const speakEl = document.createElement('div');
-      speakEl.className = 'speaking-indicator';
-      speakEl.innerHTML = '<div class="speaking-wave"><span></span><span></span><span></span><span></span><span></span></div> 正在說話中...';
-      bubble.appendChild(speakEl);
-      speakTextByChunks(reply, speakEl); // 不 await，背景執行
-    }
-
-  } catch (err) {
-    const typingMsg = document.getElementById('typingMsg');
-    if (typingMsg) typingMsg.remove();
-    showToast('連線錯誤，請確認 API Key 是否正確。');
-    console.error(err);
-    isLoading = false;
-    document.getElementById('sendBtn').disabled = false;
-    document.getElementById('micBtn').disabled = false;
+  }catch(err){
+    const tm=document.getElementById('typingMsg');if(tm) tm.remove();
+    showToast('連線錯誤，請確認 API Key 是否正確。');console.error(err);
+    isLoading=false;
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('micBtn').disabled=false;
   }
 }
 
-// ── AudioContext（需使用者互動後解鎖）──────────────
-let audioCtx = null;
-function unlockAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+// ── TTS ──
+function cleanForTTS(t){
+  return t.replace(/<[^>]+>/g,'')
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu,'')
+    .replace(/[【】\[\]#*_`~]/g,'').replace(/\s+/g,' ').trim();
 }
-
-// ── PCM → WAV 轉換（Gemini TTS 回傳 PCM，需手動加 header）──
-function pcmToWav(pcmData, sampleRate) {
-  const numChannels = 1, bitsPerSample = 16, dataSize = pcmData.length * 2;
-  const buffer = new ArrayBuffer(44 + dataSize), view = new DataView(buffer);
-  const ws = (o, s) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); };
-  ws(0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); ws(8, 'WAVE'); ws(12, 'fmt ');
-  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, numChannels, true);
-  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true); view.setUint16(34, bitsPerSample, true);
-  ws(36, 'data'); view.setUint32(40, dataSize, true);
-  for (let i = 0; i < pcmData.length; i++) view.setInt16(44 + i * 2, pcmData[i], true);
-  return new Blob([view], { type: 'audio/wav' });
+async function speakText(text,indicator){
+  if(!ttsEnabled||isPaused){if(indicator)indicator.remove();return;}
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  try{
+    const wav=await fetchTTS(cleanForTTS(text));
+    if(wav&&ttsEnabled&&!isPaused) await playWav(wav);
+  }catch(e){console.error('TTS',e);}
+  finally{if(indicator)indicator.remove();}
 }
-
-// 清理 TTS 文字
-function cleanForTTS(text) {
-  return text
-    .replace(/<[^>]+>/g, '')
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu, '')
-    .replace(/[【】\[\]#*_`~]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-// 整段一起送 TTS（聲音統一、不跳句）
-async function speakTextByChunks(text, indicator) {
-  if (!ttsEnabled) { if (indicator) indicator.remove(); return; }
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  try {
-    const wavBlob = await fetchTTSAudio(cleanForTTS(text));
-    if (wavBlob && ttsEnabled) await playWavBlob(wavBlob);
-  } catch (e) {
-    console.error('TTS error', e);
-  } finally {
-    if (indicator) indicator.remove();
-  }
-}
-
-// 取得 TTS，回傳 WAV Blob
-async function fetchTTSAudio(text) {
-  if (!text || text.length < 1) return null;
-  try {
-    const res = await fetch(
+async function fetchTTS(text){
+  if(!text) return null;
+  try{
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${geminiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text }] }],
-          generationConfig: {
-            responseModalities: ['AUDIO'],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
-          }
-        })
-      }
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         contents:[{parts:[{text}]}],
+         generationConfig:{responseModalities:['AUDIO'],
+           speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Aoede'}}}}
+       })}
     );
-    if (!res.ok) { console.error('TTS API error:', res.status); return null; }
-    const data = await res.json();
-    const inlineData = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-    if (!inlineData?.data) { console.warn('TTS: no audio data'); return null; }
-    const sampleRate = parseInt(inlineData.mimeType?.match(/rate=(\d+)/)?.[1] || '24000', 10);
-    const binary = atob(inlineData.data);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    const pcm16 = new Int16Array(bytes.buffer);
-    return pcmToWav(pcm16, sampleRate);
-  } catch (e) {
-    console.error('TTS fetch error:', e);
-    return null;
-  }
+    if(!res.ok) return null;
+    const data=await res.json();
+    const d=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+    if(!d?.data) return null;
+    const sr=parseInt(d.mimeType?.match(/rate=(\d+)/)?.[1]||'24000',10);
+    const bin=atob(d.data),bytes=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    return pcmToWav(new Int16Array(bytes.buffer),sr);
+  }catch(e){console.error('TTS fetch',e);return null;}
 }
-
-// 用 AudioContext 播放 WAV Blob
-async function playWavBlob(wavBlob) {
-  return new Promise(async (resolve) => {
-    try {
-      if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
-      if (audioCtx) {
-        const arrayBuf = await wavBlob.arrayBuffer();
-        const decoded = await audioCtx.decodeAudioData(arrayBuf);
-        const src = audioCtx.createBufferSource();
-        src.buffer = decoded;
-        src.connect(audioCtx.destination);
-        src.onended = resolve;
-        src.start(0);
+async function playWav(wav){
+  return new Promise(async resolve=>{
+    try{
+      if(audioCtx&&audioCtx.state==='suspended') await audioCtx.resume();
+      if(audioCtx){
+        const ab=await wav.arrayBuffer(),dec=await audioCtx.decodeAudioData(ab);
+        const src=audioCtx.createBufferSource();
+        src.buffer=dec;src.connect(audioCtx.destination);
+        src.onended=resolve;src.start(0);
       } else {
-        // Fallback
-        const url = URL.createObjectURL(wavBlob);
-        currentAudio = new Audio(url);
-        currentAudio.onended = () => { URL.revokeObjectURL(url); resolve(); };
-        currentAudio.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+        const url=URL.createObjectURL(wav);
+        currentAudio=new Audio(url);
+        currentAudio.onended=()=>{URL.revokeObjectURL(url);resolve();};
+        currentAudio.onerror=()=>{URL.revokeObjectURL(url);resolve();};
         await currentAudio.play().catch(resolve);
       }
-    } catch (e) {
-      console.error('playWavBlob error:', e);
-      resolve();
-    }
+    }catch(e){console.error('playWav',e);resolve();}
   });
 }
 
-async function speakText(text, indicator) {
-  await speakTextByChunks(text, indicator);
+// ── 語音輸入 ──
+async function toggleRecording(){
+  if(isLoading||isPaused) return;
+  if(isRecording){stopRecording();return;}
+  await startRecording();
 }
-
-function base64ToBlob(base64, mimeType) {
-  const bytes = atob(base64);
-  const arr = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-  return new Blob([arr], { type: mimeType });
-}
-
-// ── Voice Recording ──────────────────────────────────────────
-async function toggleRecording() {
-  if (isLoading) return;
-  if (isRecording) {
-    stopRecording();
-  } else {
-    await startRecording();
-  }
-}
-
-async function startRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-
-    // 安卓 Chrome 相容：依序找支援的格式
-    let mimeType = '';
-    const candidates = [
-      'audio/webm;codecs=opus',
-      'audio/webm',
-      'audio/ogg;codecs=opus',
-      'audio/ogg',
-      'audio/mp4',
-      ''
-    ];
-    for (const type of candidates) {
-      if (type === '' || MediaRecorder.isTypeSupported(type)) {
-        mimeType = type;
-        break;
-      }
+async function startRecording(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks=[];unlockAudio();
+    let mimeType='';
+    for(const t of['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg','audio/mp4','']){
+      if(t===''||MediaRecorder.isTypeSupported(t)){mimeType=t;break;}
     }
-
-    mediaRecorder = mimeType
-      ? new MediaRecorder(stream, { mimeType })
-      : new MediaRecorder(stream); // 讓瀏覽器自己選
-
-    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); processAudio(); };
+    mediaRecorder=mimeType?new MediaRecorder(stream,{mimeType}):new MediaRecorder(stream);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());processAudio();};
     mediaRecorder.start();
-
-    isRecording = true;
+    isRecording=true;
     document.getElementById('micBtn').classList.add('recording');
-    document.getElementById('micBtn').textContent = '⏹';
-    document.getElementById('userInput').disabled = true;
-    document.getElementById('sendBtn').disabled = true;
-
-    // Show recording indicator in chat
-    const chatArea = document.getElementById('chatArea');
-    recordingMsgEl = document.createElement('div');
-    recordingMsgEl.className = 'recording-msg';
-    recordingMsgEl.innerHTML = '<div class="rec-dot"></div> 錄音中... 按停止鍵結束';
-    chatArea.appendChild(recordingMsgEl);
-    chatArea.scrollTop = chatArea.scrollHeight;
-
-  } catch (err) {
-    showToast('無法開啟麥克風，請確認瀏覽器權限！');
-    console.error(err);
-  }
+    document.getElementById('micBtn').textContent='⏹';
+    document.getElementById('userInput').disabled=true;
+    document.getElementById('sendBtn').disabled=true;
+    const ca=document.getElementById('chatArea');
+    recordingMsgEl=document.createElement('div');
+    recordingMsgEl.className='rec-msg';
+    recordingMsgEl.innerHTML='<div class="rec-dot"></div> 錄音中... 再按一次停止';
+    ca.appendChild(recordingMsgEl);ca.scrollTop=ca.scrollHeight;
+  }catch(err){showToast('無法開啟麥克風，請確認瀏覽器權限！');console.error(err);}
 }
-
-function stopRecording() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
-  isRecording = false;
+function stopRecording(){
+  if(mediaRecorder&&mediaRecorder.state!=='inactive') mediaRecorder.stop();
+  isRecording=false;
   document.getElementById('micBtn').classList.remove('recording');
-  document.getElementById('micBtn').textContent = '🎤';
-  document.getElementById('userInput').disabled = false;
+  document.getElementById('micBtn').textContent='🎤';
+  document.getElementById('userInput').disabled=false;
 }
-
-async function processAudio() {
-  // Remove recording indicator, show processing
-  if (recordingMsgEl) { recordingMsgEl.remove(); recordingMsgEl = null; }
-
-  const chatArea = document.getElementById('chatArea');
-  const procEl = document.createElement('div');
-  procEl.className = 'processing-msg';
-  procEl.textContent = '🧠 正在聽小朋友說的話...';
-  chatArea.appendChild(procEl);
-  chatArea.scrollTop = chatArea.scrollHeight;
-
-  isLoading = true;
-  document.getElementById('sendBtn').disabled = true;
-  document.getElementById('micBtn').disabled = true;
-
-  try {
-    const recMime = mediaRecorder.mimeType || 'audio/webm';
-    const audioBlob = new Blob(audioChunks, { type: recMime });
-    const base64Audio = await blobToBase64(audioBlob);
-    const audioMime = recMime.split(';')[0];
-
-    // Send to Gemini for STT + context-aware reply in one shot
-    const contents = [
-      ...conversationHistory,
-      {
-        role: 'user',
-        parts: [
-          {
-            inline_data: {
-              mime_type: audioMime,
-              data: base64Audio
-            }
-          },
-          {
-            text: '（這是小朋友說的話的錄音。請先在心裡理解小朋友說了什麼，然後以PIZZA姊姊的身份繼續故事流程回應。回應前請用一行「小朋友說：xxx」標示你聽到的內容，換行後再給出你的回應。）'
-          }
-        ]
-      }
-    ];
-
+async function processAudio(){
+  if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
+  const ca=document.getElementById('chatArea');
+  const procEl=document.createElement('div');procEl.className='proc-msg';
+  procEl.textContent='🧠 正在聽小朋友說的話...';
+  ca.appendChild(procEl);ca.scrollTop=ca.scrollHeight;
+  isLoading=true;
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('micBtn').disabled=true;
+  try{
+    const recMime=mediaRecorder.mimeType||'audio/webm';
+    const blob=new Blob(audioChunks,{type:recMime});
+    const b64=await blobToBase64(blob);
+    const mime=recMime.split(';')[0];
+    const contents=[...conversationHistory,{
+      role:'user',parts:[
+        {inline_data:{mime_type:mime,data:b64}},
+        {text:'（這是小朋友說的話的錄音。請先在心裡理解小朋友說了什麼，然後以PIZZA姊姊的身份繼續故事流程回應。回應前請用一行「小朋友說：xxx」標示你聽到的內容，換行後再給出你的回應。）'}
+      ]
+    }];
     procEl.remove();
-
-    const response = await fetch(
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-          generationConfig: { maxOutputTokens: 1000 }
-        })
-      }
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
+         contents,generationConfig:{maxOutputTokens:1200}
+       })}
     );
-
-    const data = await response.json();
-    if (data.error) { showToast('語音辨識錯誤：' + data.error.message); return; }
-
-    const fullReply = data.candidates[0].content.parts[0].text;
-
-    // Parse out transcription line vs actual reply
-    const lines = fullReply.split('\n');
-    let transcription = '';
-    let replyLines = [];
-    let foundTrans = false;
-    for (const line of lines) {
-      if (!foundTrans && line.startsWith('小朋友說：')) {
-        transcription = line.replace('小朋友說：', '').trim();
-        foundTrans = true;
-      } else if (foundTrans || !line.startsWith('小朋友說：')) {
-        if (foundTrans) replyLines.push(line);
-      }
+    const data=await res.json();
+    if(data.error){showToast('語音辨識錯誤：'+data.error.message);return;}
+    const full=data.candidates[0].content.parts[0].text;
+    const lines=full.split('\n');
+    let trans='',rlines=[],found=false;
+    for(const l of lines){
+      if(!found&&l.startsWith('小朋友說：')){trans=l.replace('小朋友說：','').trim();found=true;}
+      else if(found) rlines.push(l);
     }
-    // fallback: if no transcription line found, use full reply as reply
-    const pizzaReply = replyLines.length ? replyLines.join('\n').trim() : fullReply;
-
-    // Show transcription as user bubble
-    if (transcription) {
-      addMessage('user', '🎤 ' + transcription);
-      conversationHistory.push({ role: 'user', parts: [{ text: transcription }] });
+    const pizzaReply=rlines.length?rlines.join('\n').trim():full;
+    if(trans){
+      addMessage('user','🎤 '+trans);
+      conversationHistory.push({role:'user',parts:[{text:trans}]});
     }
-
-    // Show PIZZA reply
-    conversationHistory.push({ role: 'model', parts: [{ text: pizzaReply }] });
-    const { bubble } = addMessage('assistant', pizzaReply);
-
-    // TTS 背景執行，不阻擋
-    if (ttsEnabled) {
-      const speakEl = document.createElement('div');
-      speakEl.className = 'speaking-indicator';
-      speakEl.innerHTML = '<div class="speaking-wave"><span></span><span></span><span></span><span></span><span></span></div> 正在說話中...';
-      bubble.appendChild(speakEl);
-      speakTextByChunks(pizzaReply, speakEl); // 不 await
+    conversationHistory.push({role:'model',parts:[{text:pizzaReply}]});
+    const isEnd=pizzaReply.includes('【提問結束】');
+    const{bubble}=addMessage('assistant',pizzaReply);
+    if(isEnd) setTimeout(()=>showStoryRecap(),700);
+    if(ttsEnabled&&!isPaused){
+      const ttsText=pizzaReply.replace(/【故事結束】|【提問結束】/g,'');
+      const sp=document.createElement('div');sp.className='speaking-ind';
+      sp.innerHTML='<div class="swave"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span></div> 說話中...';
+      bubble.appendChild(sp);speakText(ttsText,sp);
     }
-
-  } catch (err) {
-    showToast('處理語音時發生錯誤，請再試一次。');
-    console.error(err);
-  } finally {
-    isLoading = false;
-    document.getElementById('sendBtn').disabled = false;
-    document.getElementById('micBtn').disabled = false;
-    document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
+  }catch(err){showToast('處理語音時發生錯誤，請再試一次。');console.error(err);}
+  finally{
+    isLoading=false;
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('micBtn').disabled=false;
+    document.getElementById('chatArea').scrollTop=document.getElementById('chatArea').scrollHeight;
   }
 }
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+function blobToBase64(blob){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onloadend=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob);
   });
 }
-// ─────────────────────────────────────────────────────────────
-
-function showToast(msg) {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
+function showToast(msg){
+  const ex=document.querySelector('.toast');if(ex) ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
 }
 </script>
 </body>
