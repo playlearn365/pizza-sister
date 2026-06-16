@@ -715,15 +715,18 @@ function loadTTSVoice(){
 function cleanForTTS(t){
   return t
     .replace(/<[^>]+>/g,'')
-    // 數字鍵帽表情 1️⃣ 2️⃣ 3️⃣ 等 → 換成中文數字 + 頓號
-    .replace(/1️⃣/g,'第一，').replace(/2️⃣/g,'第二，').replace(/3️⃣/g,'第三，')
-    .replace(/4️⃣/g,'第四，').replace(/5️⃣/g,'第五，')
-    // 星星、其他裝飾符號
-    .replace(/[⭐🌟✨💫★☆*＊]/g,'')
-    // 其餘 emoji 範圍
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\u{2B00}-\u{2BFF}]/gu,'')
-    // 標記與特殊字元
-    .replace(/[【】\[\]#_`~🍕🎉😊]/g,'')
+    // 數字鍵帽表情 1️⃣ 2️⃣ 3️⃣（由數字+變體選擇符+組合用框字元組成）
+    .replace(/\d\uFE0F\u20E3/g,'')
+    .replace(/\d\u20E3/g,'')
+    // 所有 emoji 及特殊符號（寬範圍）
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu,'')
+    .replace(/[\u{2600}-\u{27FF}]/gu,'')
+    .replace(/[\u{2B00}-\u{2BFF}]/gu,'')
+    .replace(/[\u{FE00}-\u{FEFF}]/gu,'')
+    // 星號、星星文字符號
+    .replace(/[*＊★☆⭐✨💫]/g,'')
+    // 標記與雜項
+    .replace(/[【】\[\]#_`~]/g,'')
     // 多餘空白
     .replace(/\s{2,}/g,' ').trim();
 }
@@ -735,7 +738,7 @@ function speakText(text,indicator){
   if(!clean){if(indicator)indicator.remove();return;}
   const utter=new SpeechSynthesisUtterance(clean);
   utter.lang='zh-TW';
-  utter.rate=1.1;
+  utter.rate=1.3;
   if(ttsVoice) utter.voice=ttsVoice;
   utter.onend=()=>{if(indicator)indicator.remove();};
   utter.onerror=()=>{if(indicator)indicator.remove();};
@@ -834,12 +837,13 @@ async function processAudio(retryCount=0){
       throw new Error(errMsg||`HTTP ${res.status}`);
     }
 
-    // 串流顯示
-    const{div:streamDiv,bubble:streamBub}=createStreamBubble();
+    // 先讀完串流，拆出「小朋友說：」再顯示順序正確的訊息
     let fullText='';
     const reader=res.body.getReader();
     const decoder=new TextDecoder();
     let buf='';
+    // 用一個暫存氣泡先讓畫面有反應
+    const{div:streamDiv,bubble:streamBub}=createStreamBubble();
     while(true){
       const{done,value}=await reader.read();
       if(done) break;
@@ -852,11 +856,10 @@ async function processAudio(retryCount=0){
         try{
           const chunk=JSON.parse(jsonStr);
           const delta=chunk?.candidates?.[0]?.content?.parts?.[0]?.text||'';
-          if(delta){fullText+=delta;updateStreamBubble(streamBub,fullText);}
+          if(delta){fullText+=delta;}
         }catch(e){}
       }
     }
-    finalizeStreamBubble(streamBub,fullText);
 
     // 拆出「小朋友說：」那行
     const lines2=fullText.split('\n');
@@ -866,13 +869,19 @@ async function processAudio(retryCount=0){
       else if(found) rlines.push(l);
     }
     const pizzaReply=rlines.length?rlines.join('\n').trim():fullText;
+
+    // 先把暫存氣泡移除，重新按正確順序顯示
+    streamDiv.remove();
+
+    // 1. 先顯示小朋友說的話
     if(trans){
       addMessage('user','🎤 '+trans);
       conversationHistory.push({role:'user',parts:[{text:trans}]});
     }
     conversationHistory.push({role:'model',parts:[{text:pizzaReply}]});
-    // 更新串流氣泡為乾淨的 pizzaReply
-    finalizeStreamBubble(streamBub,pizzaReply);
+
+    // 2. 再顯示 PIZZA 的回應
+    const{bubble:finalBub}=addMessage('assistant',pizzaReply);
 
     const isEnd=pizzaReply.includes('【提問結束】');
     if(isEnd) setTimeout(()=>showStoryRecap(),700);
@@ -880,7 +889,7 @@ async function processAudio(retryCount=0){
       const ttsText=pizzaReply.replace(/【故事結束】|【提問結束】/g,'');
       const sp=document.createElement('div');sp.className='speaking-ind';
       sp.innerHTML='<div class="swave"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span></div> 說話中...';
-      streamBub.appendChild(sp);speakText(ttsText,sp);
+      finalBub.appendChild(sp);speakText(ttsText,sp);
     }
   }catch(err){
     if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
