@@ -551,7 +551,9 @@ ${rawHistory}
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
       <div class="recap-story-title">🌟 ${title} 🌟</div>
       <div class="recap-body">${body.replace(/\n/g,'<br>')}</div>
-      <button class="btn-copy" onclick="copyStory(this,${JSON.stringify(encodeURIComponent('🌟 '+title+' 🌟\n\n'+body))})">📋 複製故事</button>`;
+      <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
+    // 用 dataset 儲存故事文字，避免特殊字元在 HTML 屬性裡斷掉
+    card.querySelector('.btn-copy').dataset.story='🌟 '+title+' 🌟\n\n'+body;
     ca.scrollTop=ca.scrollHeight;
   }catch(err){
     console.error('故事整理失敗',err);
@@ -560,8 +562,8 @@ ${rawHistory}
   }
 }
 
-function copyStory(btn, encodedText){
-  const text=decodeURIComponent(encodedText);
+function copyStory(btn){
+  const text=btn.dataset.story||'';
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent='✅ 已複製！';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 複製故事';btn.classList.remove('copied');},2500);
@@ -715,8 +717,12 @@ function loadTTSVoice(){
 function cleanForTTS(t){
   return t
     .replace(/<[^>]+>/g,'')
-    // 數字鍵帽表情（含 Unicode 變體選擇符）
-    .replace(/\d\uFE0F\u20E3/g,'，').replace(/\d\u20E3/g,'，')
+    // 數字鍵帽表情（含 Unicode 變體選擇符）→ 唸出「第X個，」
+    .replace(/1\uFE0F\u20E3/g,'第一個，').replace(/1\u20E3/g,'第一個，')
+    .replace(/2\uFE0F\u20E3/g,'第二個，').replace(/2\u20E3/g,'第二個，')
+    .replace(/3\uFE0F\u20E3/g,'第三個，').replace(/3\u20E3/g,'第三個，')
+    .replace(/4\uFE0F\u20E3/g,'第四個，').replace(/4\u20E3/g,'第四個，')
+    .replace(/5\uFE0F\u20E3/g,'第五個，').replace(/5\u20E3/g,'第五個，')
     // 所有 emoji 及特殊符號
     .replace(/[\u{1F000}-\u{1FFFF}]/gu,'')
     .replace(/[\u{2600}-\u{27FF}]/gu,'')
@@ -739,7 +745,7 @@ function speakText(text,indicator){
   if(!clean){if(indicator)indicator.remove();return;}
   const utter=new SpeechSynthesisUtterance(clean);
   utter.lang='zh-TW';
-  utter.rate=1.3;
+  utter.rate=1.1;
   if(ttsVoice) utter.voice=ttsVoice;
   utter.onend=()=>{if(indicator)indicator.remove();};
   utter.onerror=()=>{if(indicator)indicator.remove();};
