@@ -523,11 +523,12 @@ ${rawHistory}
 
 請你從這段對話中，提取出完整的故事內容，整理成一篇適合做成繪本的故事。要求：
 1. 幫這個故事取一個好聽、吸引小朋友的故事名稱（放在第一行，格式：【故事名稱】）
-2. 故事內容要完整，包含開頭、中段、結局，文字流暢自然
+2. 故事內容要完整，包含開頭、中段、結局，文字流暢自然，每段約60-80字
 3. 不要包含選項（1️⃣2️⃣3️⃣）、不要包含問答內容、不要包含讚美語
 4. 故事分成3段，每段之間空一行
 5. 適合4-6歲小朋友，用詞簡單溫暖
-6. 只輸出故事名稱和故事內容，不要加任何說明或前言`;
+6. 只輸出故事名稱和故事內容，不要加任何說明或前言
+7. 故事必須完整寫完，不可以中途截斷`;
 
   try{
     const res=await fetch(
@@ -535,7 +536,7 @@ ${rawHistory}
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          contents:[{role:'user',parts:[{text:prompt}]}],
-         generationConfig:{maxOutputTokens:800}
+         generationConfig:{maxOutputTokens:2000}
        })}
     );
     const data=await res.json();
@@ -654,9 +655,11 @@ async function sendToAPI(userText, isInit, retryCount=0){
     conversationHistory.push({role:'model',parts:[{text:fullText}]});
 
     const isEnd=fullText.includes('【提問結束】');
+    const isStoryDone=fullText.includes('【故事結束】');
     isLoading=false;
     setInputDisabled(false);
-    if(isEnd) setTimeout(()=>showStoryRecap(),700);
+    if(isStoryDone&&!document.querySelector('.story-recap')) setTimeout(()=>showStoryRecap(),1000);
+    if(isEnd&&!document.querySelector('.story-recap')) setTimeout(()=>showStoryRecap(),700);
 
     if(ttsEnabled&&!isPaused){
       const ttsText=fullText.replace(/【故事結束】|【提問結束】/g,'');
@@ -898,7 +901,9 @@ async function processAudio(retryCount=0){
     const{bubble:finalBub}=addMessage('assistant',pizzaReply);
 
     const isEnd=pizzaReply.includes('【提問結束】');
-    if(isEnd) setTimeout(()=>showStoryRecap(),700);
+    const isStoryDone=pizzaReply.includes('【故事結束】');
+    if(isStoryDone&&!document.querySelector('.story-recap')) setTimeout(()=>showStoryRecap(),1000);
+    if(isEnd&&!document.querySelector('.story-recap')) setTimeout(()=>showStoryRecap(),700);
     if(ttsEnabled&&!isPaused){
       const ttsText=pizzaReply.replace(/【故事結束】|【提問結束】/g,'');
       const sp=document.createElement('div');sp.className='speaking-ind';
