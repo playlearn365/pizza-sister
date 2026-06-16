@@ -15,7 +15,6 @@
 body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
   display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
 
-/* 浮動泡泡背景 */
 .bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 .bg span{position:absolute;border-radius:50%;opacity:0.06;animation:floatUp linear infinite;}
 .bg .s1{width:90px;height:90px;background:var(--red);left:5%;animation-duration:20s;}
@@ -36,10 +35,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
   text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.25);
   animation:popIn .5s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes popIn{from{transform:scale(.6) rotate(-4deg);opacity:0;}to{transform:scale(1);opacity:1;}}
-
 .pizza-chan{width:120px;height:120px;margin:0 auto 14px;animation:charBob 2.5s ease-in-out infinite;}
 @keyframes charBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-12px) rotate(3deg);}}
-
 .api-card h1{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--red);margin-bottom:6px;}
 .api-card p{color:#888;font-size:.93rem;margin-bottom:22px;line-height:1.6;}
 .flabel{font-size:.85rem;font-weight:800;color:#555;text-align:left;margin-bottom:5px;}
@@ -57,7 +54,6 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
 /* ═══ MAIN APP ═══ */
 #app{display:none;flex-direction:column;width:100%;max-width:720px;min-height:100vh;position:relative;z-index:1;}
 
-/* Header */
 .header{display:flex;align-items:center;gap:10px;padding:10px 16px 8px;
   background:white;box-shadow:0 4px 0 rgba(255,71,87,.07),0 6px 18px rgba(0,0,0,.06);
   position:sticky;top:0;z-index:20;border-bottom:3px solid #FFE8E0;}
@@ -67,24 +63,18 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
 .hinfo h2{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--red);line-height:1.2;}
 .hinfo p{font-size:.76rem;color:var(--text-light);font-weight:600;}
 .hbtns{display:flex;gap:6px;align-items:center;}
-
 .btn-pause{width:44px;height:44px;border-radius:14px;border:none;cursor:pointer;
   background:linear-gradient(135deg,#FFD93D,#FF8C42);
   display:flex;align-items:center;justify-content:center;font-size:19px;
   box-shadow:0 5px 0 rgba(180,100,0,.3);transition:all .15s;}
 .btn-pause:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(180,100,0,.3);}
-.btn-pause.paused{background:linear-gradient(135deg,var(--green),#17a853);
-  box-shadow:0 5px 0 rgba(0,120,60,.3);}
-
+.btn-pause.paused{background:linear-gradient(135deg,var(--green),#17a853);box-shadow:0 5px 0 rgba(0,120,60,.3);}
 .btn-tts{width:44px;height:44px;border-radius:14px;border:none;cursor:pointer;
-  background:#f0f0f0;display:flex;align-items:center;justify-content:center;
-  font-size:19px;transition:all .15s;}
+  background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:19px;transition:all .15s;}
 .btn-tts.on{background:linear-gradient(135deg,var(--blue),var(--purple));}
 
-/* 暫停覆蓋 */
 .pause-ov{display:none;position:fixed;inset:0;z-index:150;
-  background:rgba(40,20,10,.72);backdrop-filter:blur(7px);
-  align-items:center;justify-content:center;}
+  background:rgba(40,20,10,.72);backdrop-filter:blur(7px);align-items:center;justify-content:center;}
 .pause-ov.show{display:flex;}
 .pause-card{background:white;border-radius:32px;padding:40px 34px;text-align:center;
   max-width:320px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
@@ -98,12 +88,10 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
   box-shadow:0 6px 0 rgba(0,100,40,.3);transition:all .15s;}
 .btn-resume:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,100,40,.3);}
 
-/* Chat */
 .chat-area{flex:1;overflow-y:auto;padding:14px 13px 8px;display:flex;flex-direction:column;gap:13px;}
 .chat-area::-webkit-scrollbar{width:5px;}
 .chat-area::-webkit-scrollbar-thumb{background:#FFD6C0;border-radius:3px;}
 
-/* Messages */
 .msg{display:flex;gap:8px;max-width:91%;animation:msgIn .4s cubic-bezier(0.34,1.3,0.64,1);}
 @keyframes msgIn{from{opacity:0;transform:translateY(18px) scale(.92);}to{opacity:1;transform:none;}}
 .msg.pizza{align-self:flex-start;}
@@ -113,18 +101,24 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
 .msg.user .mavatar{background:linear-gradient(135deg,var(--blue),var(--purple));font-size:20px;}
 .mbubble{padding:12px 16px;border-radius:22px;line-height:1.72;
   font-size:1rem;max-width:calc(100% - 48px);box-shadow:0 4px 14px rgba(0,0,0,.07);}
-.msg.pizza .mbubble{background:white;color:var(--text);border-bottom-left-radius:5px;
-  border:2.5px solid #FFE4D6;}
-.msg.user .mbubble{background:linear-gradient(135deg,var(--blue),var(--purple));
-  color:white;border-bottom-right-radius:5px;}
+.msg.pizza .mbubble{background:white;color:var(--text);border-bottom-left-radius:5px;border:2.5px solid #FFE4D6;}
+.msg.user .mbubble{background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border-bottom-right-radius:5px;}
 
-/* 故事回顧 */
+/* 串流游標 */
+.stream-cursor{display:inline-block;width:2px;height:1em;background:var(--orange);
+  margin-left:2px;vertical-align:middle;animation:blink .7s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
 .story-recap{align-self:center;width:100%;max-width:580px;
   background:linear-gradient(135deg,#FFFBF0,#FFF0F8);
   border:3px dashed #FFB347;border-radius:24px;padding:20px 22px;
   animation:msgIn .4s cubic-bezier(0.34,1.3,0.64,1);}
 .recap-title{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;
   color:var(--red);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.recap-story-title{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:900;
+  color:var(--orange);text-align:center;margin-bottom:14px;letter-spacing:.04em;
+  background:linear-gradient(135deg,var(--red),var(--orange),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .recap-body{font-size:.93rem;color:var(--text);line-height:1.85;white-space:pre-wrap;}
 .btn-copy{margin-top:14px;width:100%;padding:11px;border:none;border-radius:14px;
   background:linear-gradient(135deg,var(--orange),var(--yellow));
@@ -132,10 +126,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
   cursor:pointer;box-shadow:0 4px 0 rgba(180,100,0,.3);transition:all .15s;
   display:flex;align-items:center;justify-content:center;gap:6px;}
 .btn-copy:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(180,100,0,.3);}
-.btn-copy.copied{background:linear-gradient(135deg,var(--green),#17a853);
-  box-shadow:0 4px 0 rgba(0,120,50,.3);}
+.btn-copy.copied{background:linear-gradient(135deg,var(--green),#17a853);box-shadow:0 4px 0 rgba(0,120,50,.3);}
 
-/* Typing */
 .typing-ind{display:flex;gap:5px;padding:12px 16px;align-items:center;}
 .typing-ind span{width:9px;height:9px;border-radius:50%;animation:tdot 1.2s infinite ease-in-out;}
 .typing-ind span:nth-child(1){background:var(--orange);}
@@ -143,7 +135,6 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
 .typing-ind span:nth-child(3){background:var(--pink);animation-delay:.4s;}
 @keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1.2);opacity:1;}}
 
-/* Speaking */
 .speaking-ind{display:inline-flex;align-items:center;gap:5px;
   background:rgba(46,213,115,.12);border-radius:12px;
   padding:4px 10px;margin-top:8px;font-size:.75rem;color:#17a853;font-weight:800;}
@@ -154,18 +145,21 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;
 .swave .e{height:6px;animation-delay:.4s;}
 @keyframes sw{0%,100%{transform:scaleY(.5);}50%{transform:scaleY(1);}}
 
-/* Recording */
+/* 錄音狀態 */
 .rec-msg{align-self:flex-end;display:flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,var(--red),var(--pink));color:white;
   padding:11px 17px;border-radius:20px;border-bottom-right-radius:4px;
-  font-weight:800;font-size:.88rem;box-shadow:0 4px 14px rgba(255,71,87,.35);
-  animation:msgIn .3s ease;}
+  font-weight:800;font-size:.88rem;box-shadow:0 4px 14px rgba(255,71,87,.35);animation:msgIn .3s ease;}
 .rec-dot{width:10px;height:10px;background:white;border-radius:50%;animation:rblink 1s infinite;}
 @keyframes rblink{0%,100%{opacity:1;}50%{opacity:.2;}}
 .proc-msg{align-self:flex-end;background:rgba(165,94,234,.12);color:var(--purple);
   padding:9px 16px;border-radius:18px;font-weight:700;font-size:.86rem;animation:msgIn .3s ease;}
 
-/* Input */
+/* 重試提示 */
+.retry-msg{align-self:center;background:rgba(255,140,66,.12);color:var(--orange);
+  padding:8px 16px;border-radius:14px;font-weight:700;font-size:.83rem;animation:msgIn .3s ease;
+  display:flex;align-items:center;gap:6px;}
+
 .input-area{padding:11px 13px 13px;background:white;
   box-shadow:0 -4px 20px rgba(0,0,0,.06);border-top:3px solid #FFE8E0;
   display:flex;gap:8px;align-items:flex-end;}
@@ -176,7 +170,6 @@ textarea{width:100%;padding:12px 16px;border:3px solid #eee;border-radius:20px;
 textarea:focus{border-color:var(--red);background:white;}
 textarea::placeholder{color:#ccc;}
 textarea:disabled{opacity:.5;}
-
 .btn-mic{width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;
   background:linear-gradient(135deg,var(--blue),var(--purple));
   display:flex;align-items:center;justify-content:center;font-size:22px;
@@ -192,7 +185,6 @@ textarea:disabled{opacity:.5;}
 .btn-send:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(180,40,20,.3);}
 .btn-send:disabled,.btn-mic:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
 
-/* Toast */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
   background:rgba(40,20,10,.92);color:white;padding:11px 22px;
   border-radius:20px;font-size:.9rem;font-weight:700;z-index:300;
@@ -211,50 +203,34 @@ textarea:disabled{opacity:.5;}
 <!-- ═══ API SCREEN ═══ -->
 <div id="apiScreen">
   <div class="api-card">
-    <!-- PIZZA姊姊人物 -->
     <svg class="pizza-chan" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-      <!-- 頭髮 -->
       <ellipse cx="60" cy="38" rx="32" ry="24" fill="#4A2C0A"/>
       <rect x="28" y="36" width="9" height="26" rx="4.5" fill="#4A2C0A"/>
       <rect x="83" y="36" width="9" height="26" rx="4.5" fill="#4A2C0A"/>
-      <!-- 雙馬尾 -->
       <ellipse cx="22" cy="48" rx="10" ry="14" fill="#FF6B9D" transform="rotate(-18 22 48)"/>
       <ellipse cx="98" cy="48" rx="10" ry="14" fill="#FF6B9D" transform="rotate(18 98 48)"/>
-      <!-- 髮飾 -->
       <circle cx="28" cy="38" r="6" fill="#FFD93D" stroke="#FF8C42" stroke-width="2"/>
       <circle cx="92" cy="38" r="6" fill="#FFD93D" stroke="#FF8C42" stroke-width="2"/>
-      <!-- 臉 -->
       <ellipse cx="60" cy="60" rx="28" ry="26" fill="#FFDAB9"/>
-      <!-- 眼睛白 -->
       <ellipse cx="49" cy="55" rx="7" ry="8" fill="white"/>
       <ellipse cx="71" cy="55" rx="7" ry="8" fill="white"/>
-      <!-- 眼珠 -->
       <circle cx="50" cy="56" r="5" fill="#3D1C02"/>
       <circle cx="72" cy="56" r="5" fill="#3D1C02"/>
-      <!-- 亮點 -->
       <circle cx="52" cy="54" r="2" fill="white"/>
       <circle cx="74" cy="54" r="2" fill="white"/>
-      <!-- 睫毛 -->
       <path d="M43 49 Q46 46 49 48" stroke="#3D1C02" stroke-width="1.5" fill="none" stroke-linecap="round"/>
       <path d="M65 48 Q68 46 71 49" stroke="#3D1C02" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <!-- 腮紅 -->
       <ellipse cx="42" cy="64" rx="7" ry="4" fill="#FFB6C1" opacity=".65"/>
       <ellipse cx="78" cy="64" rx="7" ry="4" fill="#FFB6C1" opacity=".65"/>
-      <!-- 嘴 -->
       <path d="M50 70 Q60 78 70 70" stroke="#C0665A" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <!-- 身體 -->
       <rect x="34" y="84" width="52" height="44" rx="16" fill="#FF6B9D"/>
-      <!-- 衣服條紋 -->
       <rect x="34" y="96" width="52" height="6" fill="#FF4757" opacity=".4"/>
       <rect x="34" y="108" width="52" height="6" fill="#FF4757" opacity=".4"/>
-      <!-- PIZZA 胸章 -->
       <circle cx="60" cy="96" r="13" fill="#FFD93D" stroke="#FF8C42" stroke-width="2.5"/>
       <path d="M60 83 L73 103 L47 103 Z" fill="#FF8C42" opacity=".55"/>
       <circle cx="60" cy="96" r="5" fill="#FF4757"/>
-      <!-- 手 -->
       <ellipse cx="28" cy="95" rx="8" ry="11" fill="#FFDAB9"/>
       <ellipse cx="92" cy="95" rx="8" ry="11" fill="#FFDAB9"/>
-      <!-- 腳 -->
       <rect x="42" y="126" width="14" height="12" rx="6" fill="#FF4757"/>
       <rect x="64" y="126" width="14" height="12" rx="6" fill="#FF4757"/>
     </svg>
@@ -270,7 +246,6 @@ textarea:disabled{opacity:.5;}
 <!-- ═══ MAIN APP ═══ -->
 <div id="app">
   <div class="header">
-    <!-- 小版角色 -->
     <svg class="hchar" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="30" cy="19" rx="16" ry="12" fill="#4A2C0A"/>
       <rect x="14" y="17" width="5" height="14" rx="2.5" fill="#4A2C0A"/>
@@ -315,7 +290,6 @@ textarea:disabled{opacity:.5;}
   </div>
 </div>
 
-<!-- ═══ 暫停覆蓋 ═══ -->
 <div class="pause-ov" id="pauseOv">
   <div class="pause-card">
     <div class="pause-icon">⏸️</div>
@@ -328,15 +302,17 @@ textarea:disabled{opacity:.5;}
 <script>
 let geminiKey='', ttsEnabled=true, isPaused=false, isLoading=false;
 let currentAudio=null, audioCtx=null;
-let conversationHistory=[], storyParts=[];
+let conversationHistory=[];
 let mediaRecorder=null, audioChunks=[], isRecording=false, recordingMsgEl=null;
 
+// ── Audio unlock ──
 function unlockAudio(){
   if(audioCtx) return;
   audioCtx=new(window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended') audioCtx.resume();
 }
 
+// ── PCM → WAV ──
 function pcmToWav(pcm,sr){
   const nc=1,bps=16,ds=pcm.length*2,buf=new ArrayBuffer(44+ds),v=new DataView(buf);
   const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
@@ -418,6 +394,7 @@ function startApp(){
   document.getElementById('apiScreen').style.display='none';
   document.getElementById('app').style.display='flex';
   unlockAudio();
+  loadTTSVoice();
   sendToAPI('',true);
 }
 
@@ -427,12 +404,10 @@ function togglePause(){
   const ov=document.getElementById('pauseOv'),btn=document.getElementById('pauseBtn');
   if(isPaused){
     ov.classList.add('show');btn.classList.add('paused');btn.textContent='▶️';
-    if(currentAudio) currentAudio.pause();
-    if(audioCtx) audioCtx.suspend();
+    speechSynthesis.pause();
   } else {
     ov.classList.remove('show');btn.classList.remove('paused');btn.textContent='⏸️';
-    if(audioCtx) audioCtx.resume();
-    if(currentAudio) currentAudio.play().catch(()=>{});
+    speechSynthesis.resume();
   }
 }
 
@@ -441,8 +416,7 @@ function toggleTTS(){
   ttsEnabled=!ttsEnabled;
   const btn=document.getElementById('ttsBtn');
   if(ttsEnabled){btn.textContent='🔊';btn.classList.add('on');}
-  else{btn.textContent='🔇';btn.classList.remove('on');
-    if(currentAudio){currentAudio.pause();currentAudio=null;}}
+  else{btn.textContent='🔇';btn.classList.remove('on');speechSynthesis.cancel();}
 }
 
 // ── UI ──
@@ -499,38 +473,91 @@ function addMessage(role,text,isTyping=false){
   return{div,bubble:bub};
 }
 
+// 串流顯示：逐字更新氣泡
+function createStreamBubble(){
+  const ca=document.getElementById('chatArea');
+  const div=document.createElement('div');div.className='msg pizza';
+  const av=document.createElement('div');av.className='mavatar';av.innerHTML=CHAR_SVG;
+  const bub=document.createElement('div');bub.className='mbubble';
+  bub.innerHTML='<span class="stream-cursor"></span>';
+  div.appendChild(av);div.appendChild(bub);
+  ca.appendChild(div);ca.scrollTop=ca.scrollHeight;
+  return{div,bubble:bub};
+}
+
+function updateStreamBubble(bub,text){
+  const cursor=bub.querySelector('.stream-cursor');
+  const formatted=formatText(text);
+  bub.innerHTML=formatted+'<span class="stream-cursor"></span>';
+  bub.appendChild(bub.querySelector('.stream-cursor')||document.createElement('span'));
+  const ca=document.getElementById('chatArea');
+  ca.scrollTop=ca.scrollHeight;
+}
+
+function finalizeStreamBubble(bub,text){
+  bub.innerHTML=formatText(text);
+}
+
 function formatText(t){
   return t.replace(/\n/g,'<br>').replace(/【故事結束】|【提問結束】/g,'');
 }
 
-function showStoryRecap(){
-  // 從對話紀錄中找出故事內容（步驟2、3、4），避免重複
-  const storyMessages = conversationHistory
-    .filter(m => m.role === 'model')
-    .map(m => m.parts[0].text)
-    .filter(t =>
-      t.includes('從前') || t.includes('有一天') ||
-      t.includes('故事裡的主角可以是') || t.includes('這個時候') ||
-      t.includes('你喜歡這個故事嗎') || t.includes('【故事結束】')
-    );
-  if(!storyMessages.length) return;
-  // 已經顯示過就不重複
+async function showStoryRecap(){
   if(document.querySelector('.story-recap')) return;
-
   const ca=document.getElementById('chatArea');
-  const card=document.createElement('div');
-  card.className='story-recap';
-  const cleanStory=storyMessages.join('\n\n')
-    .replace(/故事裡的主角可以是[\s\S]*?你想選哪一個呢？/g,'')
-    .replace(/這個時候，[\s\S]*?你覺得他應該怎麼做呢？/g,'')
-    .replace(/1️⃣[^\n]*\n?|2️⃣[^\n]*\n?|3️⃣[^\n]*\n?/g,'')
-    .replace(/你喜歡這個故事嗎？/g,'')
-    .replace(/【故事結束】|【提問結束】/g,'')
-    .replace(/\n{3,}/g,'\n\n').trim();
-  card.innerHTML=`<div class="recap-title">📖 我們今天一起創作的故事！</div>
-    <div class="recap-body" id="recapText">${cleanStory.replace(/\n/g,'<br>')}</div>
-    <button class="btn-copy" onclick="copyStory(this,'${encodeURIComponent(cleanStory)}')">📋 複製故事</button>`;
+
+  // 顯示整理中提示卡
+  const card=document.createElement('div');card.className='story-recap';
+  card.innerHTML=`<div class="recap-title">✨ 正在幫故事整理成繪本格式...</div>
+    <div class="recap-body" style="color:#bbb;font-size:.88rem;">🪄 PIZZA姊姊正在幫你的故事取名字、整理段落...</div>`;
   ca.appendChild(card);ca.scrollTop=ca.scrollHeight;
+
+  // 把整段對話送給 AI 整理
+  const rawHistory = conversationHistory
+    .map(m => `【${m.role==='model'?'PIZZA姊姊':'小朋友'}】${m.parts[0].text}`)
+    .join('\n\n');
+
+  const prompt=`以下是PIZZA姊姊說故事的完整對話紀錄：
+
+${rawHistory}
+
+請你從這段對話中，提取出完整的故事內容，整理成一篇適合做成繪本的故事。要求：
+1. 幫這個故事取一個好聽、吸引小朋友的故事名稱（放在第一行，格式：【故事名稱】）
+2. 故事內容要完整，包含開頭、中段、結局，文字流暢自然
+3. 不要包含選項（1️⃣2️⃣3️⃣）、不要包含問答內容、不要包含讚美語
+4. 故事分成3段，每段之間空一行
+5. 適合4-6歲小朋友，用詞簡單溫暖
+6. 只輸出故事名稱和故事內容，不要加任何說明或前言`;
+
+  try{
+    const res=await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         contents:[{role:'user',parts:[{text:prompt}]}],
+         generationConfig:{maxOutputTokens:800}
+       })}
+    );
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const raw=data.candidates[0].content.parts[0].text.trim();
+
+    // 拆出標題和內文
+    const titleMatch=raw.match(/【(.+?)】/);
+    const title=titleMatch?titleMatch[1]:'我們的故事';
+    const body=raw.replace(/【.+?】/,'').trim();
+
+    card.innerHTML=`
+      <div class="recap-title">📖 我們今天一起創作的故事！</div>
+      <div class="recap-story-title">🌟 ${title} 🌟</div>
+      <div class="recap-body">${body.replace(/\n/g,'<br>')}</div>
+      <button class="btn-copy" onclick="copyStory(this,${JSON.stringify(encodeURIComponent('🌟 '+title+' 🌟\n\n'+body))})">📋 複製故事</button>`;
+    ca.scrollTop=ca.scrollHeight;
+  }catch(err){
+    console.error('故事整理失敗',err);
+    card.innerHTML=`<div class="recap-title">📖 我們今天一起創作的故事！</div>
+      <div class="recap-body" style="color:#aaa;font-size:.88rem;">故事整理遇到問題，請重新整理頁面再試一次。</div>`;
+  }
 }
 
 function copyStory(btn, encodedText){
@@ -539,132 +566,179 @@ function copyStory(btn, encodedText){
     btn.textContent='✅ 已複製！';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 複製故事';btn.classList.remove('copied');},2500);
   }).catch(()=>{
-    // fallback for older browsers
-    const ta=document.createElement('textarea');
-    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();
-    document.execCommand('copy');document.body.removeChild(ta);
+    const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
     btn.textContent='✅ 已複製！';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 複製故事';btn.classList.remove('copied');},2500);
   });
 }
 
-// ── 送 API ──
-async function sendToAPI(userText,isInit){
+// ── 送 API（支援串流）──
+async function sendToAPI(userText, isInit, retryCount=0){
   if(isPaused) return;
   isLoading=true;
-  document.getElementById('sendBtn').disabled=true;
-  document.getElementById('micBtn').disabled=true;
+  setInputDisabled(true);
   if(!isInit) conversationHistory.push({role:'user',parts:[{text:userText}]});
-  addMessage('assistant','',true);
+
+  // 顯示打字中動畫
+  const typingDiv=document.createElement('div');
+  typingDiv.className='msg pizza';typingDiv.id='typingMsg';
+  const tav=document.createElement('div');tav.className='mavatar';tav.innerHTML=CHAR_SVG;
+  const tbub=document.createElement('div');tbub.className='mbubble';
+  tbub.innerHTML='<div class="typing-ind"><span></span><span></span><span></span></div>';
+  typingDiv.appendChild(tav);typingDiv.appendChild(tbub);
+  document.getElementById('chatArea').appendChild(typingDiv);
+  document.getElementById('chatArea').scrollTop=99999;
+
   try{
     const contents=isInit
       ?[{role:'user',parts:[{text:'開始！請用PIZZA姊姊的方式跟我打招呼並問我想聽什麼故事。'}]}]
       :conversationHistory;
+
     const res=await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
-         contents,generationConfig:{maxOutputTokens:1200}
+         contents,
+         generationConfig:{maxOutputTokens:1200}
        })}
     );
-    const data=await res.json();
+
+    // 移除打字動畫，建立串流氣泡
     const tm=document.getElementById('typingMsg');if(tm) tm.remove();
-    if(data.error){showToast('API 錯誤：'+data.error.message);return;}
 
-    let reply=data.candidates[0].content.parts[0].text;
-    conversationHistory.push({role:'model',parts:[{text:reply}]});
+    if(!res.ok){
+      const errData=await res.json().catch(()=>({}));
+      const errMsg=(errData?.error?.message||'');
+      // 高流量錯誤自動重試
+      if((errMsg.includes('high demand')||errMsg.includes('overloaded')||res.status===503||res.status===429)&&retryCount<2){
+        showRetryToast(retryCount+1);
+        await sleep(3000+(retryCount*2000));
+        isLoading=false;
+        if(!isInit) conversationHistory.pop(); // 移除剛加的 user message，重試時會重新加
+        return sendToAPI(userText,isInit,retryCount+1);
+      }
+      throw new Error(errMsg||`HTTP ${res.status}`);
+    }
 
-    const isEnd=reply.includes('【提問結束】');
-    const{bubble}=addMessage('assistant',reply);
+    const{div:streamDiv,bubble:streamBub}=createStreamBubble();
+    let fullText='';
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let buffer='';
 
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');
+      buffer=lines.pop()||'';
+      for(const line of lines){
+        if(!line.startsWith('data:')) continue;
+        const jsonStr=line.slice(5).trim();
+        if(jsonStr==='[DONE]') break;
+        try{
+          const chunk=JSON.parse(jsonStr);
+          const delta=chunk?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+          if(delta){
+            fullText+=delta;
+            updateStreamBubble(streamBub,fullText);
+          }
+        }catch(e){/* skip malformed */}
+      }
+    }
+    finalizeStreamBubble(streamBub,fullText);
+    conversationHistory.push({role:'model',parts:[{text:fullText}]});
+
+    const isEnd=fullText.includes('【提問結束】');
     isLoading=false;
-    document.getElementById('sendBtn').disabled=false;
-    document.getElementById('micBtn').disabled=false;
-    document.getElementById('chatArea').scrollTop=document.getElementById('chatArea').scrollHeight;
-
+    setInputDisabled(false);
     if(isEnd) setTimeout(()=>showStoryRecap(),700);
 
     if(ttsEnabled&&!isPaused){
-      const ttsText=reply.replace(/【故事結束】|【提問結束】/g,'');
+      const ttsText=fullText.replace(/【故事結束】|【提問結束】/g,'');
       const sp=document.createElement('div');sp.className='speaking-ind';
       sp.innerHTML='<div class="swave"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span></div> 說話中...';
-      bubble.appendChild(sp);
+      streamBub.appendChild(sp);
       speakText(ttsText,sp);
     }
   }catch(err){
-    const tm=document.getElementById('typingMsg');if(tm) tm.remove();
-    showToast('連線錯誤，請確認 API Key 是否正確。');console.error(err);
+    const tm2=document.getElementById('typingMsg');if(tm2) tm2.remove();
+    // 自動重試邏輯
+    if((err.message.includes('high demand')||err.message.includes('overloaded'))&&retryCount<2){
+      showRetryToast(retryCount+1);
+      await sleep(3000+(retryCount*2000));
+      isLoading=false;
+      if(!isInit) conversationHistory.pop();
+      return sendToAPI(userText,isInit,retryCount+1);
+    }
+    showToast('連線錯誤：'+err.message);
+    console.error(err);
     isLoading=false;
-    document.getElementById('sendBtn').disabled=false;
-    document.getElementById('micBtn').disabled=false;
+    setInputDisabled(false);
   }
 }
 
-// ── TTS ──
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function showRetryToast(attempt){
+  const ca=document.getElementById('chatArea');
+  const el=document.createElement('div');el.className='retry-msg';
+  el.innerHTML=`⏳ 伺服器忙碌中，自動重試第 ${attempt} 次...`;
+  ca.appendChild(el);ca.scrollTop=99999;
+  setTimeout(()=>el.remove(),5000);
+}
+
+function setInputDisabled(disabled){
+  document.getElementById('sendBtn').disabled=disabled;
+  document.getElementById('micBtn').disabled=disabled;
+}
+
+// ── TTS：Web Speech API（Google 國語臺灣，固定聲音）──
+let ttsVoice=null;
+
+function loadTTSVoice(){
+  const tryFind=()=>{
+    const all=speechSynthesis.getVoices();
+    // 優先找 Google 國語（臺灣）
+    ttsVoice=all.find(v=>v.name==='Google 國語（臺灣）')
+      ||all.find(v=>v.lang==='zh-TW'&&v.name.includes('Google'))
+      ||all.find(v=>v.lang==='zh-TW')
+      ||all.find(v=>v.lang.startsWith('zh'))
+      ||null;
+  };
+  if(speechSynthesis.getVoices().length>0) tryFind();
+  else speechSynthesis.onvoiceschanged=tryFind;
+}
+
 function cleanForTTS(t){
   return t.replace(/<[^>]+>/g,'')
     .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu,'')
     .replace(/[【】\[\]#*_`~]/g,'').replace(/\s+/g,' ').trim();
 }
-async function speakText(text,indicator){
+
+function speakText(text,indicator){
   if(!ttsEnabled||isPaused){if(indicator)indicator.remove();return;}
-  if(currentAudio){currentAudio.pause();currentAudio=null;}
-  try{
-    const wav=await fetchTTS(cleanForTTS(text));
-    if(wav&&ttsEnabled&&!isPaused) await playWav(wav);
-  }catch(e){console.error('TTS',e);}
-  finally{if(indicator)indicator.remove();}
-}
-async function fetchTTS(text){
-  if(!text) return null;
-  try{
-    const res=await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${geminiKey}`,
-      {method:'POST',headers:{'Content-Type':'application/json'},
-       body:JSON.stringify({
-         contents:[{parts:[{text}]}],
-         generationConfig:{responseModalities:['AUDIO'],
-           speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Aoede'}}}}
-       })}
-    );
-    if(!res.ok) return null;
-    const data=await res.json();
-    const d=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-    if(!d?.data) return null;
-    const sr=parseInt(d.mimeType?.match(/rate=(\d+)/)?.[1]||'24000',10);
-    const bin=atob(d.data),bytes=new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-    return pcmToWav(new Int16Array(bytes.buffer),sr);
-  }catch(e){console.error('TTS fetch',e);return null;}
-}
-async function playWav(wav){
-  return new Promise(async resolve=>{
-    try{
-      if(audioCtx&&audioCtx.state==='suspended') await audioCtx.resume();
-      if(audioCtx){
-        const ab=await wav.arrayBuffer(),dec=await audioCtx.decodeAudioData(ab);
-        const src=audioCtx.createBufferSource();
-        src.buffer=dec;src.connect(audioCtx.destination);
-        src.onended=resolve;src.start(0);
-      } else {
-        const url=URL.createObjectURL(wav);
-        currentAudio=new Audio(url);
-        currentAudio.onended=()=>{URL.revokeObjectURL(url);resolve();};
-        currentAudio.onerror=()=>{URL.revokeObjectURL(url);resolve();};
-        await currentAudio.play().catch(resolve);
-      }
-    }catch(e){console.error('playWav',e);resolve();}
-  });
+  speechSynthesis.cancel();
+  const clean=cleanForTTS(text);
+  if(!clean){if(indicator)indicator.remove();return;}
+  const utter=new SpeechSynthesisUtterance(clean);
+  utter.lang='zh-TW';
+  utter.rate=0.9;
+  if(ttsVoice) utter.voice=ttsVoice;
+  utter.onend=()=>{if(indicator)indicator.remove();};
+  utter.onerror=()=>{if(indicator)indicator.remove();};
+  speechSynthesis.speak(utter);
 }
 
-// ── 語音輸入 ──
+// ── 語音輸入（優化反饋 + 重試）──
 async function toggleRecording(){
   if(isLoading||isPaused) return;
   if(isRecording){stopRecording();return;}
   await startRecording();
 }
+
 async function startRecording(){
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
@@ -676,35 +750,45 @@ async function startRecording(){
     mediaRecorder=mimeType?new MediaRecorder(stream,{mimeType}):new MediaRecorder(stream);
     mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
     mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());processAudio();};
-    mediaRecorder.start();
+    // 每 250ms 送一次資料，讓 chunks 更細
+    mediaRecorder.start(250);
     isRecording=true;
-    document.getElementById('micBtn').classList.add('recording');
-    document.getElementById('micBtn').textContent='⏹';
+    const micBtn=document.getElementById('micBtn');
+    micBtn.classList.add('recording');micBtn.textContent='⏹';
     document.getElementById('userInput').disabled=true;
     document.getElementById('sendBtn').disabled=true;
     const ca=document.getElementById('chatArea');
-    recordingMsgEl=document.createElement('div');
-    recordingMsgEl.className='rec-msg';
+    recordingMsgEl=document.createElement('div');recordingMsgEl.className='rec-msg';
     recordingMsgEl.innerHTML='<div class="rec-dot"></div> 錄音中... 再按一次停止';
     ca.appendChild(recordingMsgEl);ca.scrollTop=ca.scrollHeight;
   }catch(err){showToast('無法開啟麥克風，請確認瀏覽器權限！');console.error(err);}
 }
+
 function stopRecording(){
   if(mediaRecorder&&mediaRecorder.state!=='inactive') mediaRecorder.stop();
   isRecording=false;
-  document.getElementById('micBtn').classList.remove('recording');
-  document.getElementById('micBtn').textContent='🎤';
+  const micBtn=document.getElementById('micBtn');
+  micBtn.classList.remove('recording');micBtn.textContent='🎤';
   document.getElementById('userInput').disabled=false;
+  // 立即顯示處理中提示（停止後馬上換）
+  if(recordingMsgEl){
+    recordingMsgEl.classList.remove('rec-msg');
+    recordingMsgEl.className='proc-msg';
+    recordingMsgEl.innerHTML='🧠 正在聽小朋友說的話...';
+  }
 }
-async function processAudio(){
-  if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
+
+async function processAudio(retryCount=0){
   const ca=document.getElementById('chatArea');
-  const procEl=document.createElement('div');procEl.className='proc-msg';
-  procEl.textContent='🧠 正在聽小朋友說的話...';
-  ca.appendChild(procEl);ca.scrollTop=ca.scrollHeight;
+  // 如果 recordingMsgEl 還沒換成 proc-msg，補一個
+  if(!recordingMsgEl||recordingMsgEl.className!=='proc-msg'){
+    if(recordingMsgEl) recordingMsgEl.remove();
+    recordingMsgEl=document.createElement('div');recordingMsgEl.className='proc-msg';
+    recordingMsgEl.textContent='🧠 正在聽小朋友說的話...';
+    ca.appendChild(recordingMsgEl);ca.scrollTop=ca.scrollHeight;
+  }
   isLoading=true;
-  document.getElementById('sendBtn').disabled=true;
-  document.getElementById('micBtn').disabled=true;
+  setInputDisabled(true);
   try{
     const recMime=mediaRecorder.mimeType||'audio/webm';
     const blob=new Blob(audioChunks,{type:recMime});
@@ -716,53 +800,101 @@ async function processAudio(){
         {text:'（這是小朋友說的話的錄音。請先在心裡理解小朋友說了什麼，然後以PIZZA姊姊的身份繼續故事流程回應。回應前請用一行「小朋友說：xxx」標示你聽到的內容，換行後再給出你的回應。）'}
       ]
     }];
-    procEl.remove();
+
+    if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
+
     const res=await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
          contents,generationConfig:{maxOutputTokens:1200}
        })}
     );
-    const data=await res.json();
-    if(data.error){showToast('語音辨識錯誤：'+data.error.message);return;}
-    const full=data.candidates[0].content.parts[0].text;
-    const lines=full.split('\n');
+
+    if(!res.ok){
+      const errData=await res.json().catch(()=>({}));
+      const errMsg=(errData?.error?.message||'');
+      if((errMsg.includes('high demand')||errMsg.includes('overloaded')||res.status===503||res.status===429)&&retryCount<2){
+        showRetryToast(retryCount+1);
+        await sleep(3000+(retryCount*2000));
+        isLoading=false;
+        return processAudio(retryCount+1);
+      }
+      throw new Error(errMsg||`HTTP ${res.status}`);
+    }
+
+    // 串流顯示
+    const{div:streamDiv,bubble:streamBub}=createStreamBubble();
+    let fullText='';
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop()||'';
+      for(const line of lines){
+        if(!line.startsWith('data:')) continue;
+        const jsonStr=line.slice(5).trim();
+        if(jsonStr==='[DONE]') break;
+        try{
+          const chunk=JSON.parse(jsonStr);
+          const delta=chunk?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+          if(delta){fullText+=delta;updateStreamBubble(streamBub,fullText);}
+        }catch(e){}
+      }
+    }
+    finalizeStreamBubble(streamBub,fullText);
+
+    // 拆出「小朋友說：」那行
+    const lines2=fullText.split('\n');
     let trans='',rlines=[],found=false;
-    for(const l of lines){
+    for(const l of lines2){
       if(!found&&l.startsWith('小朋友說：')){trans=l.replace('小朋友說：','').trim();found=true;}
       else if(found) rlines.push(l);
     }
-    const pizzaReply=rlines.length?rlines.join('\n').trim():full;
+    const pizzaReply=rlines.length?rlines.join('\n').trim():fullText;
     if(trans){
       addMessage('user','🎤 '+trans);
       conversationHistory.push({role:'user',parts:[{text:trans}]});
     }
     conversationHistory.push({role:'model',parts:[{text:pizzaReply}]});
+    // 更新串流氣泡為乾淨的 pizzaReply
+    finalizeStreamBubble(streamBub,pizzaReply);
+
     const isEnd=pizzaReply.includes('【提問結束】');
-    const{bubble}=addMessage('assistant',pizzaReply);
     if(isEnd) setTimeout(()=>showStoryRecap(),700);
     if(ttsEnabled&&!isPaused){
       const ttsText=pizzaReply.replace(/【故事結束】|【提問結束】/g,'');
       const sp=document.createElement('div');sp.className='speaking-ind';
       sp.innerHTML='<div class="swave"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span></div> 說話中...';
-      bubble.appendChild(sp);speakText(ttsText,sp);
+      streamBub.appendChild(sp);speakText(ttsText,sp);
     }
-  }catch(err){showToast('處理語音時發生錯誤，請再試一次。');console.error(err);}
-  finally{
+  }catch(err){
+    if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
+    if((err.message.includes('high demand')||err.message.includes('overloaded'))&&retryCount<2){
+      showRetryToast(retryCount+1);
+      await sleep(3000+(retryCount*2000));
+      isLoading=false;
+      return processAudio(retryCount+1);
+    }
+    showToast('處理語音時發生錯誤，請再試一次。');console.error(err);
+  }finally{
     isLoading=false;
-    document.getElementById('sendBtn').disabled=false;
-    document.getElementById('micBtn').disabled=false;
-    document.getElementById('chatArea').scrollTop=document.getElementById('chatArea').scrollHeight;
+    setInputDisabled(false);
+    ca.scrollTop=ca.scrollHeight;
   }
 }
+
 function blobToBase64(blob){
   return new Promise((res,rej)=>{
     const r=new FileReader();
     r.onloadend=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob);
   });
 }
+
 function showToast(msg){
   const ex=document.querySelector('.toast');if(ex) ex.remove();
   const t=document.createElement('div');t.className='toast';t.textContent=msg;
