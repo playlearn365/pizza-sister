@@ -506,59 +506,76 @@ async function showStoryRecap(){
   if(document.querySelector('.story-recap')) return;
   const ca=document.getElementById('chatArea');
 
-  // 顯示整理中提示卡
   const card=document.createElement('div');card.className='story-recap';
-  card.innerHTML=`<div class="recap-title">✨ 正在幫故事整理成繪本格式...</div>
-    <div class="recap-body" style="color:#bbb;font-size:.88rem;">🪄 PIZZA姊姊正在幫你的故事取名字、整理段落...</div>`;
+  card.innerHTML=`<div class="recap-title">✨ 正在整理故事...</div>
+    <div class="recap-body" style="color:#bbb;font-size:.88rem;">🪄 幫你的故事取名字中...</div>`;
   ca.appendChild(card);ca.scrollTop=ca.scrollHeight;
 
-  // 把整段對話送給 AI 整理
-  const rawHistory = conversationHistory
-    .map(m => `【${m.role==='model'?'PIZZA姊姊':'小朋友'}】${m.parts[0].text}`)
-    .join('\n\n');
+  // 從對話歷史直接抓故事段落（PIZZA說的、包含故事敘述的訊息）
+  const modelMsgs=conversationHistory
+    .filter(m=>m.role==='model')
+    .map(m=>m.parts[0].text);
 
-  const prompt=`以下是PIZZA姊姊說故事的完整對話紀錄：
+  // 找開頭、中段、結局三段
+  const opening=modelMsgs.find(t=>
+    (t.includes('從前')||t.includes('很久很久')||t.includes('在一個'))&&
+    t.includes('故事裡的主角'));
+  const middle=modelMsgs.find(t=>
+    t.includes('這個時候')||
+    (t.length>80&&!t.includes('故事裡的主角')&&!t.includes('你喜歡')&&
+     !t.includes('你覺得')&&!t.includes('如果你是')&&!t.includes('有沒有')&&
+     modelMsgs.indexOf(t)>modelMsgs.indexOf(opening||'')));
+  const ending=modelMsgs.find(t=>t.includes('【故事結束】'));
 
-${rawHistory}
+  // 清理各段文字
+  function cleanStoryText(t){
+    if(!t) return '';
+    return t
+      .replace(/故事裡的主角可以是[\s\S]*?你想選哪一個呢？/g,'')
+      .replace(/這個時候，[\S]*?可以\.\.\.\s*/g,'')
+      .replace(/\d\uFE0F\u20E3[^\n]*\n?/g,'').replace(/\d\u20E3[^\n]*\n?/g,'')
+      .replace(/1️⃣[^\n]*\n?|2️⃣[^\n]*\n?|3️⃣[^\n]*\n?/g,'')
+      .replace(/你想選哪一個呢？[^\n]*/g,'').replace(/你覺得他應該怎麼做呢？[^\n]*/g,'')
+      .replace(/【故事結束】|【提問結束】/g,'')
+      .replace(/哇！[^！]*！|好棒[^！]*！|你真的[^！]*！/g,'')
+      .replace(/\n{3,}/g,'\n\n').trim();
+  }
 
-請你從這段對話中，提取出完整的故事內容，整理成一篇適合做成繪本的故事。要求：
-1. 幫這個故事取一個好聽、吸引小朋友的故事名稱（放在第一行，格式：【故事名稱】）
-2. 故事內容要完整，包含開頭、中段、結局，文字流暢自然，每段約60-80字
-3. 不要包含選項（1️⃣2️⃣3️⃣）、不要包含問答內容、不要包含讚美語
-4. 故事分成3段，每段之間空一行
-5. 適合4-6歲小朋友，用詞簡單溫暖
-6. 只輸出故事名稱和故事內容，不要加任何說明或前言
-7. 故事必須完整寫完，不可以中途截斷`;
+  const part1=cleanStoryText(opening);
+  const part2=cleanStoryText(middle);
+  const part3=cleanStoryText(ending);
 
+  const storyBody=[part1,part2,part3].filter(Boolean).join('\n\n');
+
+  // 用 API 只取標題（短 prompt，不容易截斷）
   try{
-    const res=await fetch(
+    const titleRes=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
-         contents:[{role:'user',parts:[{text:prompt}]}],
-         generationConfig:{maxOutputTokens:2000}
+         contents:[{role:'user',parts:[{text:`以下是一個幼兒故事的內容摘要：\n${storyBody.slice(0,300)}\n\n請幫這個故事取一個好聽、吸引4-6歲小朋友的故事名稱。只輸出名稱本身，不要加任何標點符號或說明。`}]}],
+         generationConfig:{maxOutputTokens:50}
        })}
     );
-    const data=await res.json();
-    if(data.error) throw new Error(data.error.message);
-    const raw=data.candidates[0].content.parts[0].text.trim();
-
-    // 拆出標題和內文
-    const titleMatch=raw.match(/【(.+?)】/);
-    const title=titleMatch?titleMatch[1]:'我們的故事';
-    const body=raw.replace(/【.+?】/,'').trim();
+    const titleData=await titleRes.json();
+    const title=(titleData?.candidates?.[0]?.content?.parts?.[0]?.text||'我們的故事').trim().replace(/[【】]/g,'');
 
     card.innerHTML=`
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
       <div class="recap-story-title">🌟 ${title} 🌟</div>
-      <div class="recap-body">${body.replace(/\n/g,'<br>')}</div>
+      <div class="recap-body">${storyBody.replace(/\n/g,'<br>')}</div>
       <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
-    lastStoryText='🌟 '+title+' 🌟\n\n'+body;
+    lastStoryText='🌟 '+title+' 🌟\n\n'+storyBody;
     ca.scrollTop=ca.scrollHeight;
   }catch(err){
-    console.error('故事整理失敗',err);
-    card.innerHTML=`<div class="recap-title">📖 我們今天一起創作的故事！</div>
-      <div class="recap-body" style="color:#aaa;font-size:.88rem;">故事整理遇到問題，請重新整理頁面再試一次。</div>`;
+    console.error('取標題失敗',err);
+    card.innerHTML=`
+      <div class="recap-title">📖 我們今天一起創作的故事！</div>
+      <div class="recap-story-title">🌟 我們的故事 🌟</div>
+      <div class="recap-body">${storyBody.replace(/\n/g,'<br>')}</div>
+      <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
+    lastStoryText='🌟 我們的故事 🌟\n\n'+storyBody;
+    ca.scrollTop=ca.scrollHeight;
   }
 }
 
