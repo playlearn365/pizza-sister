@@ -713,9 +713,19 @@ function loadTTSVoice(){
 }
 
 function cleanForTTS(t){
-  return t.replace(/<[^>]+>/g,'')
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu,'')
-    .replace(/[【】\[\]#*_`~]/g,'').replace(/\s+/g,' ').trim();
+  return t
+    .replace(/<[^>]+>/g,'')
+    // 數字鍵帽表情 1️⃣ 2️⃣ 3️⃣ 等 → 換成中文數字 + 頓號
+    .replace(/1️⃣/g,'第一，').replace(/2️⃣/g,'第二，').replace(/3️⃣/g,'第三，')
+    .replace(/4️⃣/g,'第四，').replace(/5️⃣/g,'第五，')
+    // 星星、其他裝飾符號
+    .replace(/[⭐🌟✨💫★☆*＊]/g,'')
+    // 其餘 emoji 範圍
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\u{2B00}-\u{2BFF}]/gu,'')
+    // 標記與特殊字元
+    .replace(/[【】\[\]#_`~🍕🎉😊]/g,'')
+    // 多餘空白
+    .replace(/\s{2,}/g,' ').trim();
 }
 
 function speakText(text,indicator){
@@ -725,7 +735,7 @@ function speakText(text,indicator){
   if(!clean){if(indicator)indicator.remove();return;}
   const utter=new SpeechSynthesisUtterance(clean);
   utter.lang='zh-TW';
-  utter.rate=0.9;
+  utter.rate=1.1;
   if(ttsVoice) utter.voice=ttsVoice;
   utter.onend=()=>{if(indicator)indicator.remove();};
   utter.onerror=()=>{if(indicator)indicator.remove();};
