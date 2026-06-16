@@ -596,7 +596,7 @@ async function sendToAPI(userText, isInit, retryCount=0){
       :conversationHistory;
 
     const res=await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
@@ -715,10 +715,9 @@ function loadTTSVoice(){
 function cleanForTTS(t){
   return t
     .replace(/<[^>]+>/g,'')
-    // 數字鍵帽表情 1️⃣ 2️⃣ 3️⃣（由數字+變體選擇符+組合用框字元組成）
-    .replace(/\d\uFE0F\u20E3/g,'')
-    .replace(/\d\u20E3/g,'')
-    // 所有 emoji 及特殊符號（寬範圍）
+    // 數字鍵帽表情（含 Unicode 變體選擇符）
+    .replace(/\d\uFE0F\u20E3/g,'，').replace(/\d\u20E3/g,'，')
+    // 所有 emoji 及特殊符號
     .replace(/[\u{1F000}-\u{1FFFF}]/gu,'')
     .replace(/[\u{2600}-\u{27FF}]/gu,'')
     .replace(/[\u{2B00}-\u{2BFF}]/gu,'')
@@ -727,6 +726,8 @@ function cleanForTTS(t){
     .replace(/[*＊★☆⭐✨💫]/g,'')
     // 標記與雜項
     .replace(/[【】\[\]#_`~]/g,'')
+    // 換行改成停頓（句號讓 TTS 自然停一下）
+    .replace(/\n{2,}/g,'。').replace(/\n/g,'，')
     // 多餘空白
     .replace(/\s{2,}/g,' ').trim();
 }
@@ -817,7 +818,7 @@ async function processAudio(retryCount=0){
     if(recordingMsgEl){recordingMsgEl.remove();recordingMsgEl=null;}
 
     const res=await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          system_instruction:{parts:[{text:SYSTEM_PROMPT}]},
@@ -837,13 +838,18 @@ async function processAudio(retryCount=0){
       throw new Error(errMsg||`HTTP ${res.status}`);
     }
 
-    // 先讀完串流，拆出「小朋友說：」再顯示順序正確的訊息
+    // 等待 API 回應（顯示打字動畫讓使用者知道在處理）
+    const waitDiv=document.createElement('div');waitDiv.className='msg pizza';waitDiv.id='audioWaitMsg';
+    const wav=document.createElement('div');wav.className='mavatar';wav.innerHTML=CHAR_SVG;
+    const wbub=document.createElement('div');wbub.className='mbubble';
+    wbub.innerHTML='<div class="typing-ind"><span></span><span></span><span></span></div>';
+    waitDiv.appendChild(wav);waitDiv.appendChild(wbub);
+    ca.appendChild(waitDiv);ca.scrollTop=ca.scrollHeight;
+
     let fullText='';
     const reader=res.body.getReader();
     const decoder=new TextDecoder();
     let buf='';
-    // 用一個暫存氣泡先讓畫面有反應
-    const{div:streamDiv,bubble:streamBub}=createStreamBubble();
     while(true){
       const{done,value}=await reader.read();
       if(done) break;
@@ -861,6 +867,9 @@ async function processAudio(retryCount=0){
       }
     }
 
+    // 移除打字動畫
+    const wm=document.getElementById('audioWaitMsg');if(wm)wm.remove();
+
     // 拆出「小朋友說：」那行
     const lines2=fullText.split('\n');
     let trans='',rlines=[],found=false;
@@ -869,9 +878,6 @@ async function processAudio(retryCount=0){
       else if(found) rlines.push(l);
     }
     const pizzaReply=rlines.length?rlines.join('\n').trim():fullText;
-
-    // 先把暫存氣泡移除，重新按正確順序顯示
-    streamDiv.remove();
 
     // 1. 先顯示小朋友說的話
     if(trans){
