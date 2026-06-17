@@ -394,8 +394,20 @@ function startApp(){
   document.getElementById('apiScreen').style.display='none';
   document.getElementById('app').style.display='flex';
   unlockAudio();
+  warmUpTTS();   // 利用這次點擊互動解鎖 iOS 語音
   loadTTSVoice();
   sendToAPI('',true);
+}
+
+// ── 語音預熱：iOS 必須在使用者互動當下先播一次，才能解鎖之後的自動朗讀 ──
+function warmUpTTS(){
+  try{
+    speechSynthesis.cancel();
+    const warm=new SpeechSynthesisUtterance(' ');
+    warm.volume=0;          // 靜音，老師聽不到
+    warm.rate=1;
+    speechSynthesis.speak(warm);
+  }catch(e){console.warn('TTS warmup failed',e);}
 }
 
 // ── 暫停 ──
@@ -508,73 +520,94 @@ async function showStoryRecap(){
 
   const card=document.createElement('div');card.className='story-recap';
   card.innerHTML=`<div class="recap-title">✨ 正在整理故事...</div>
-    <div class="recap-body" style="color:#bbb;font-size:.88rem;">🪄 幫你的故事取名字中...</div>`;
+    <div class="recap-body" style="color:#bbb;font-size:.88rem;">🪄 幫你的故事整理成繪本格式中...</div>`;
   ca.appendChild(card);ca.scrollTop=ca.scrollHeight;
 
-  // 從對話歷史直接抓故事段落（PIZZA說的、包含故事敘述的訊息）
+  // 從對話歷史抓出 PIZZA 說的純故事段落
   const modelMsgs=conversationHistory
     .filter(m=>m.role==='model')
     .map(m=>m.parts[0].text);
 
-  // 找開頭、中段、結局三段
-  const opening=modelMsgs.find(t=>
-    (t.includes('從前')||t.includes('很久很久')||t.includes('在一個'))&&
-    t.includes('故事裡的主角'));
-  const middle=modelMsgs.find(t=>
-    t.includes('這個時候')||
-    (t.length>80&&!t.includes('故事裡的主角')&&!t.includes('你喜歡')&&
-     !t.includes('你覺得')&&!t.includes('如果你是')&&!t.includes('有沒有')&&
-     modelMsgs.indexOf(t)>modelMsgs.indexOf(opening||'')));
-  const ending=modelMsgs.find(t=>t.includes('【故事結束】'));
+  // 抓包含故事敘述的訊息（排除打招呼、提問、讚美）
+  const storyMsgs=modelMsgs.filter(t=>{
+    const hasStory=(t.includes('從前')||t.includes('很久很久')||t.includes('在一個')||
+      t.includes('走著走著')||t.includes('原來')||t.includes('終於')||t.length>120);
+    const isQuestion=(t.includes('你覺得')||t.includes('如果你是')||t.includes('有沒有')||
+      t.includes('你喜歡')||t.includes('你有沒有'));
+    const isGreeting=t.length<80;
+    return hasStory&&!isQuestion&&!isGreeting;
+  });
 
-  // 清理各段文字
-  function cleanStoryText(t){
-    if(!t) return '';
+  // 清理每段：去掉選項、去掉讚美句、去掉問句
+  function extractStoryOnly(t){
     return t
+      // 去掉選項區塊
       .replace(/故事裡的主角可以是[\s\S]*?你想選哪一個呢？/g,'')
-      .replace(/這個時候，[\S]*?可以\.\.\.\s*/g,'')
-      .replace(/\d\uFE0F\u20E3[^\n]*\n?/g,'').replace(/\d\u20E3[^\n]*\n?/g,'')
-      .replace(/1️⃣[^\n]*\n?|2️⃣[^\n]*\n?|3️⃣[^\n]*\n?/g,'')
-      .replace(/你想選哪一個呢？[^\n]*/g,'').replace(/你覺得他應該怎麼做呢？[^\n]*/g,'')
+      .replace(/這個時候[\s\S]*?你覺得他應該怎麼做呢？/g,'')
+      .replace(/\d\uFE0F\u20E3[^\n]*/g,'').replace(/\d\u20E3[^\n]*/g,'')
+      .replace(/1️⃣[^\n]*|2️⃣[^\n]*|3️⃣[^\n]*/g,'')
+      // 去掉讚美句（通常在開頭，用！結尾的短句）
+      .replace(/^[^。！\n]{0,30}[！!][^\n]*\n?/,'')
+      .replace(/^(哇|好棒|太棒|你真的|這個主角|這個選擇)[^！\n]*[！]\s*/,'')
+      // 去掉標記
       .replace(/【故事結束】|【提問結束】/g,'')
-      .replace(/哇！[^！]*！|好棒[^！]*！|你真的[^！]*！/g,'')
+      // 去掉尾端的問句
+      .replace(/[^。]*？$/,'')
       .replace(/\n{3,}/g,'\n\n').trim();
   }
 
-  const part1=cleanStoryText(opening);
-  const part2=cleanStoryText(middle);
-  const part3=cleanStoryText(ending);
+  const cleanParts=storyMsgs.map(extractStoryOnly).filter(t=>t.length>30);
+  const rawStory=cleanParts.join('\n\n');
 
-  const storyBody=[part1,part2,part3].filter(Boolean).join('\n\n');
+  if(!rawStory){
+    card.innerHTML=`<div class="recap-title">📖 我們今天一起創作的故事！</div>
+      <div class="recap-body" style="color:#aaa;">故事內容還沒完成，請繼續說故事吧！</div>`;
+    return;
+  }
 
-  // 用 API 只取標題（短 prompt，不容易截斷）
+  // 送給 AI：只讓它取標題 + 潤稿（prompt 很短，不會截斷）
   try{
-    const titleRes=await fetch(
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
-         contents:[{role:'user',parts:[{text:`以下是一個幼兒故事的內容摘要：\n${storyBody.slice(0,300)}\n\n請幫這個故事取一個好聽、吸引4-6歲小朋友的故事名稱。只輸出名稱本身，不要加任何標點符號或說明。`}]}],
-         generationConfig:{maxOutputTokens:50}
+         contents:[{role:'user',parts:[{text:
+`以下是一個幼兒故事的三個段落，請做兩件事：
+1. 幫這個故事取一個好聽、吸引4-6歲小朋友的故事名稱，要有趣有創意（格式：【故事名稱】）
+2. 把三個段落稍微潤稿，讓故事更流暢自然，但保留原來的情節和結局，每段不要超過100字
+
+故事內容：
+${rawStory}
+
+只輸出【故事名稱】和三段故事，不要加任何說明。`}]}],
+         generationConfig:{maxOutputTokens:1200}
        })}
     );
-    const titleData=await titleRes.json();
-    const title=(titleData?.candidates?.[0]?.content?.parts?.[0]?.text||'我們的故事').trim().replace(/[【】]/g,'');
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const raw=data.candidates[0].content.parts[0].text.trim();
+
+    const titleMatch=raw.match(/【(.+?)】/);
+    const title=titleMatch?titleMatch[1]:'我們的故事';
+    const body=raw.replace(/【.+?】\n?/,'').trim();
 
     card.innerHTML=`
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
       <div class="recap-story-title">🌟 ${title} 🌟</div>
-      <div class="recap-body">${storyBody.replace(/\n/g,'<br>')}</div>
+      <div class="recap-body">${body.replace(/\n/g,'<br>')}</div>
       <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
-    lastStoryText='🌟 '+title+' 🌟\n\n'+storyBody;
+    lastStoryText='🌟 '+title+' 🌟\n\n'+body;
     ca.scrollTop=ca.scrollHeight;
+
   }catch(err){
-    console.error('取標題失敗',err);
+    console.error('故事整理失敗',err);
+    // fallback：直接顯示清理後的原文
     card.innerHTML=`
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
       <div class="recap-story-title">🌟 我們的故事 🌟</div>
-      <div class="recap-body">${storyBody.replace(/\n/g,'<br>')}</div>
+      <div class="recap-body">${rawStory.replace(/\n/g,'<br>')}</div>
       <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
-    lastStoryText='🌟 我們的故事 🌟\n\n'+storyBody;
+    lastStoryText='🌟 我們的故事 🌟\n\n'+rawStory;
     ca.scrollTop=ca.scrollHeight;
   }
 }
@@ -769,8 +802,21 @@ function speakText(text,indicator){
   utter.lang='zh-TW';
   utter.rate=1.1;
   if(ttsVoice) utter.voice=ttsVoice;
-  utter.onend=()=>{if(indicator)indicator.remove();};
-  utter.onerror=()=>{if(indicator)indicator.remove();};
+
+  // iOS 保活：長句子在 iOS 上常會中途停掉，定時 resume 保持播放
+  let keepAlive=setInterval(()=>{
+    if(speechSynthesis.speaking){
+      speechSynthesis.resume();
+    } else {
+      clearInterval(keepAlive);
+    }
+  },5000);
+
+  utter.onend=()=>{clearInterval(keepAlive);if(indicator)indicator.remove();};
+  utter.onerror=()=>{clearInterval(keepAlive);if(indicator)indicator.remove();};
+
+  // iOS 偶爾需要先 resume 才會播放
+  speechSynthesis.resume();
   speechSynthesis.speak(utter);
 }
 
