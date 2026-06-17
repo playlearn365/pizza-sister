@@ -800,7 +800,7 @@ function speakText(text,indicator){
   if(!clean){if(indicator)indicator.remove();return;}
   const utter=new SpeechSynthesisUtterance(clean);
   utter.lang='zh-TW';
-  utter.rate=1.1;
+  utter.rate=1.0;
   if(ttsVoice) utter.voice=ttsVoice;
 
   // iOS 保活：長句子在 iOS 上常會中途停掉，定時 resume 保持播放
