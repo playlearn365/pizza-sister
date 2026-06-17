@@ -565,31 +565,50 @@ async function showStoryRecap(){
     return;
   }
 
-  // 送給 AI：只讓它取標題 + 潤稿（prompt 很短，不會截斷）
+  // 送給 AI：取標題 + 潤稿（用明確分隔標記，方便解析）
   try{
     const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({
          contents:[{role:'user',parts:[{text:
-`以下是一個幼兒故事的三個段落，請做兩件事：
-1. 幫這個故事取一個好聽、吸引4-6歲小朋友的故事名稱，要有趣有創意（格式：【故事名稱】）
-2. 把三個段落稍微潤稿，讓故事更流暢自然，但保留原來的情節和結局，每段不要超過100字
+`你是一位幼兒繪本編輯。以下是一個小朋友創作的故事內容，請幫忙整理成繪本。
 
 故事內容：
 ${rawStory}
 
-只輸出【故事名稱】和三段故事，不要加任何說明。`}]}],
-         generationConfig:{maxOutputTokens:1200}
+請嚴格按照以下格式輸出（一定要包含這兩個標記）：
+
+標題：（在這裡寫一個跟故事主角、情節有關，又生動可愛、吸引4-6歲小朋友的故事名稱，例如「小刺蝟的勇敢冒險」「會魔法的小貓咪」，不要取「我們的故事」這種沒有特色的名字）
+===
+（在這裡寫整理潤稿後的故事，分3段，每段之間空一行，保留原本的情節和結局，文字流暢溫暖，每段約60-90字）`}]}],
+         generationConfig:{maxOutputTokens:1500,temperature:0.9}
        })}
     );
     const data=await res.json();
     if(data.error) throw new Error(data.error.message);
-    const raw=data.candidates[0].content.parts[0].text.trim();
+    const raw=(data?.candidates?.[0]?.content?.parts?.[0]?.text||'').trim();
+    if(!raw) throw new Error('empty response');
 
-    const titleMatch=raw.match(/【(.+?)】/);
-    const title=titleMatch?titleMatch[1]:'我們的故事';
-    const body=raw.replace(/【.+?】\n?/,'').trim();
+    // 解析標題和內文
+    let title='', body='';
+    if(raw.includes('===')){
+      const idx=raw.indexOf('===');
+      title=raw.slice(0,idx).replace(/標題[：:]/,'').replace(/[【】]/g,'').trim();
+      body=raw.slice(idx+3).trim();
+    } else {
+      // 沒有分隔線時，取第一行當標題
+      const lines=raw.split('\n').filter(l=>l.trim());
+      title=lines[0].replace(/標題[：:]/,'').replace(/[【】]/g,'').trim();
+      body=lines.slice(1).join('\n').trim();
+    }
+    // 標題清理與保險
+    title=title.replace(/^[「『]|[」』]$/g,'').trim();
+    if(!title||title.length>20||title.includes('我們的故事')){
+      // 標題不理想時，用故事第一句的關鍵詞兜底
+      title=guessTitleFromStory(rawStory);
+    }
+    if(!body) body=rawStory;
 
     card.innerHTML=`
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
@@ -601,15 +620,29 @@ ${rawStory}
 
   }catch(err){
     console.error('故事整理失敗',err);
-    // fallback：直接顯示清理後的原文
+    const fbTitle=guessTitleFromStory(rawStory);
     card.innerHTML=`
       <div class="recap-title">📖 我們今天一起創作的故事！</div>
-      <div class="recap-story-title">🌟 我們的故事 🌟</div>
+      <div class="recap-story-title">🌟 ${fbTitle} 🌟</div>
       <div class="recap-body">${rawStory.replace(/\n/g,'<br>')}</div>
       <button class="btn-copy" onclick="copyStory(this)">📋 複製故事</button>`;
-    lastStoryText='🌟 我們的故事 🌟\n\n'+rawStory;
+    lastStoryText='🌟 '+fbTitle+' 🌟\n\n'+rawStory;
     ca.scrollTop=ca.scrollHeight;
   }
+}
+
+// 從故事內容猜一個比「我們的故事」好的標題
+function guessTitleFromStory(story){
+  // 找主角關鍵詞（小+名詞）
+  const charMatch=story.match(/(小[\u4e00-\u9fa5]{1,3}|[\u4e00-\u9fa5]{2,3}(公主|王子|精靈|機器人|超人))/);
+  const char=charMatch?charMatch[0]:'';
+  // 找場景關鍵詞
+  const placeMatch=story.match(/(森林|城堡|宇宙|海洋|星球|村莊|花園|樹洞|魔法)/);
+  const place=placeMatch?placeMatch[0]:'';
+  if(char&&place) return `${char}的${place}冒險`;
+  if(char) return `${char}的奇妙冒險`;
+  if(place) return `神奇的${place}冒險`;
+  return '快樂的小故事';
 }
 
 function copyStory(btn){
