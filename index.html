@@ -789,8 +789,13 @@ function cleanForTTS(t){
     .replace(/[【】\[\]#_`~]/g,'')
     // 換行改成停頓（句號讓 TTS 自然停一下）
     .replace(/\n{2,}/g,'。').replace(/\n/g,'，')
+    // 清掉標點前後的多餘逗號（例如「？，」「。，」「，，」）
+    .replace(/([。！？，、])[，。]+/g,'$1')
     // 多餘空白
-    .replace(/\s{2,}/g,' ').trim();
+    .replace(/\s{2,}/g,' ')
+    .trim()
+    // 清掉結尾多餘的標點符號（避免 iOS 多唸一個逗號）
+    .replace(/[，、。\s]+$/,'');
 }
 
 function speakText(text,indicator){
